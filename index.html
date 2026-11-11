@@ -72,6 +72,45 @@ nav button.on{color:#fff;background:rgba(255,255,255,.14)}
 .big.az{background:var(--azul);color:#fff}
 .big small{display:block;font-weight:500;opacity:.75;font-size:12px}
 #print{display:none}
+#vDlg{z-index:20}
+.modo{display:inline-flex;background:rgba(255,255,255,.12);border-radius:9px;padding:2px;margin-bottom:3px}
+.modo button{color:#B8C7DA;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:7px}
+.modo button.on{background:#fff;color:var(--azul)}
+#app.mpres #tabs,#app.mpres #lienzo,#app.mpres #panel,#app.mpres nav,#app.mpres #bUndo,#app.mpres #bRedo,#app.mpres #bExp,#app.mpres #bProy{display:none}
+#pres{display:none;flex:1;overflow:auto;background:#F3F6FA;-webkit-overflow-scrolling:touch;position:relative}
+#app.mpres #pres{display:block}
+.pcont{padding:12px 12px calc(var(--sb) + 20px);max-width:680px;margin:0 auto}
+.pcont h3,.hoja h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin:16px 0 6px}
+.tarjeta{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.tarjeta.ok{background:#E3F2FD}
+.tarjeta .imp{white-space:nowrap;font-size:14px;text-align:right}
+.tarjeta .imp small{display:block;font-weight:500;color:var(--gris);font-size:10px}
+.vacio{color:var(--gris);font-size:14px;text-align:center;padding:14px}
+.caja{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:10px 12px}
+.caja label,.hoja label{display:block;font-size:12px;color:var(--gris);font-weight:600;margin:6px 0}
+.caja input,.caja textarea,.hoja input:not([type=radio]):not([type=checkbox]){display:block;width:100%;margin-top:3px;padding:9px 10px;border:1px solid var(--borde);border-radius:9px;font:inherit;font-size:16px;color:var(--azul);background:#fff}
+.caja textarea{resize:vertical}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bots{margin-top:10px}.bots .pb{width:100%;padding:11px 8px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.seg button{border:1px solid var(--borde);border-radius:10px;padding:8px;font-weight:700;font-size:14px;background:#fff}
+.seg button small{display:block;font-weight:500;font-size:11px;color:var(--gris)}
+.seg button.on{background:var(--azul);color:#fff;border-color:var(--azul)}.seg button.on small{color:#B8C7DA}
+.volver{font-weight:700;color:var(--acento);font-size:15px;padding:4px 0 10px}
+.part{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:9px 10px;margin-bottom:7px;display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center}
+.part .pc{grid-column:1/3;cursor:pointer}.part .pc b{display:block;font-size:14px}.part .pc small{color:var(--gris);font-size:12px}
+.pq{display:flex;align-items:center;gap:4px}.pq button{width:34px;height:32px;border-radius:8px;background:var(--claro);font-size:18px;font-weight:700}
+.pq span{min-width:38px;text-align:center;font-weight:700}
+.pi{text-align:right}.pi small{display:block;color:var(--gris);font-size:11px}.pi b{font-size:15px}
+.barraTotal{position:sticky;bottom:0;background:var(--azul);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 14px calc(var(--sb) + 10px)}
+.barraTotal div{flex:1}.barraTotal small{display:block;font-size:11px;color:#B8C7DA}.barraTotal b{font-size:17px}
+.barraTotal .pb{background:#fff;color:var(--azul);padding:11px 20px;font-size:15px}
+.ayuda{display:block;color:var(--gris);font-size:11.5px;margin-top:6px;line-height:1.35}
+.chk{display:flex!important;gap:8px;align-items:center;font-size:13px!important;margin-top:10px!important}
+.trow{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--claro);font-size:12.5px}
+.trow span{flex:1}.trow input{width:86px!important;flex:none;margin:0!important;padding:6px!important;font-size:15px!important}
+#firmaCv{width:100%;height:auto;border:1px dashed var(--borde);border-radius:10px;touch-action:none;background:#fff}
+#impLista .tarjeta{display:flex;align-items:center;gap:10px}
 @media print{
   @page{size:A4 landscape;margin:8mm}
   #app,.velo{display:none!important}
@@ -85,18 +124,19 @@ nav button.on{color:#fff;background:rgba(255,255,255,.14)}
 <div id="app">
   <header>
     <button class="ib" id="bProy" title="Proyectos">☰</button>
-    <div class="tit"><small>ALMARA · PLANOS</small><b id="nomProy">—</b></div>
+    <div class="tit"><div class="modo"><button data-m="planos" class="on">Planos</button><button data-m="pres">Presupuestos</button></div><b id="nomProy">—</b></div>
     <button class="ib" id="bUndo" title="Deshacer">↶</button>
     <button class="ib" id="bRedo" title="Rehacer">↷</button>
     <button class="ib" id="bExp" title="Exportar">⇪</button>
   </header>
   <div id="tabs"></div>
   <div id="lienzo">
-    <svg id="plano" xmlns="http://www.w3.org/2000/svg"><g id="vista"></g></svg>
+    <svg id="plano" xmlns="http://www.w3.org/2000/svg"><g id="vista"><g id="capaR"></g><g id="capaF"></g><g id="capa"></g></g></svg>
     <div id="aviso"></div>
     <div id="zoom"><button id="zMas">+</button><button id="zMenos">−</button><button id="zAjustar" style="font-size:14px">⤢</button></div>
   </div>
   <div id="panel"></div>
+  <div id="pres"></div>
   <nav id="herr">
     <button data-h="sel" class="on"><span>✋</span>Mover</button>
     <button data-h="pared"><span>▬</span>Pared</button>
@@ -127,6 +167,19 @@ nav button.on{color:#fff;background:rgba(255,255,255,.14)}
   <input id="dIn" style="width:100%;padding:11px;border:1px solid var(--borde);border-radius:10px;font:inherit;font-size:16px" autocomplete="off">
   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="pb" id="dNo">Cancelar</button><button class="pb az" id="dOk">Aceptar</button></div>
 </div></div>
+<div class="velo" id="vPart"><div class="hoja"><h2>Partida <button class="x" data-cerrar>×</button></h2><div id="partForm"></div>
+  <div class="g2 bots"><button class="pb rojo" id="pfDel">Eliminar</button><button class="pb az" id="pfOk">Guardar</button></div></div></div>
+<div class="velo" id="vTar"><div class="hoja"><h2>Tarifa ALMARA <button class="x" data-cerrar>×</button></h2>
+  <input id="tarBus" placeholder="Buscar (enchufe, cámara, cable…)" autocomplete="off"><div id="tarLista"></div>
+  <button class="big az" data-cerrar>Listo</button></div></div>
+<div class="velo" id="vImp"><div class="hoja"><h2>Cargar desde un plano <button class="x" data-cerrar>×</button></h2>
+  <div id="impLista"></div><h3>Cómo está la obra</h3>
+  <label class="chk"><input type="checkbox" id="impTubo"> Tubos y cajas ya puestos (solo pasar cable)</label>
+  <label class="chk"><input type="checkbox" id="impEmp"> Empotrado: añadir roza y tapado</label>
+  <label class="chk"><input type="checkbox" id="impMat" checked> Incluir material (Asfora, cable, tubo y cajas)</label>
+  <button class="big az" id="impOk">Añadir al presupuesto</button></div></div>
+<div class="velo" id="vFondo"><div class="hoja"><h2>Plano de fondo <button class="x" data-cerrar>×</button></h2><div id="fondoForm"></div></div></div>
+<div class="velo" id="vAj"><div class="hoja"><h2>Empresa, firma y tarifas <button class="x" data-cerrar>×</button></h2><div id="ajForm"></div></div></div>
 <div id="print"></div>
 
 <script>
@@ -266,7 +319,7 @@ function cotaSVG(w,s){
   return `<text x="${(w.x1+w.x2)/2+nx*o}" y="${(w.y1+w.y2)/2+ny*o}" font-size="${s||.17}" fill="${C.gris}" font-weight="600" text-anchor="middle" dominant-baseline="central" font-family="Helvetica,Arial,sans-serif" transform="rotate(${a} ${(w.x1+w.x2)/2+nx*o} ${(w.y1+w.y2)/2+ny*o})">${fmt(len)} m</text>`;
 }
 function escena(pl,opt){
-  opt=opt||{};let s="";
+  opt=opt||{};let s=opt.fondo?fondoSVG(pl,opt.fondo):"";
   for(const c of pl.cables){const col=(CIRC.find(k=>k.id===c.c)||CIRC[7]).c;s+=`<line x1="${c.x1}" y1="${c.y1}" x2="${c.x2}" y2="${c.y2}" stroke="${col}" stroke-width=".035" stroke-dasharray=".12 .07" stroke-linecap="round"/>`}
   for(const w of pl.paredes)s+=`<line x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}" stroke="${C.azul}" stroke-width="${w.g||.12}" stroke-linecap="square"/>`;
   if(opt.cotas)for(const w of pl.paredes)s+=cotaSVG(w);
@@ -275,7 +328,7 @@ function escena(pl,opt){
 }
 let temp=null;
 function dibujar(){
-  const pl=PL();let s=`<g id="rej">${rejilla()}</g>`;
+  const pl=PL();let s="";$("capaR").innerHTML=rejilla();pintarFondo();
   // zonas táctiles de cables y paredes
   for(const c of pl.cables){const col=(CIRC.find(k=>k.id===c.c)||CIRC[7]).c,on=sel&&sel.k==="c"&&sel.id===c.id;
     s+=`<line data-c="${c.id}" x1="${c.x1}" y1="${c.y1}" x2="${c.x2}" y2="${c.y2}" stroke="transparent" stroke-width="${Math.max(.3,18/cam.s)}"/>`;
@@ -288,6 +341,7 @@ function dibujar(){
   // tiradores de extremos
   if(sel&&(sel.k==="w"||sel.k==="c")){const o=(sel.k==="w"?pl.paredes:pl.cables).find(z=>z.id===sel.id);
     if(o)for(const e of[1,2])s+=`<circle data-e="${e}" cx="${o["x"+e]}" cy="${o["y"+e]}" r="${11/cam.s}" fill="#fff" stroke="${C.acento}" stroke-width="${3/cam.s}"/>`}
+  if(herr==="medir"&&medirA)s+=`<circle cx="${medirA.x}" cy="${medirA.y}" r="${8/cam.s}" fill="${C.rojo}" stroke="#fff" stroke-width="${2/cam.s}"/>`;
   if(temp){
     if(temp.k==="hab"){const x=Math.min(temp.x1,temp.x2),y=Math.min(temp.y1,temp.y2),w=Math.abs(temp.x2-temp.x1),h=Math.abs(temp.y2-temp.y1);
       s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="rgba(30,136,229,.08)" stroke="${C.acento}" stroke-width=".12"/>`}
@@ -297,19 +351,20 @@ function dibujar(){
     if(temp.snap)s+=`<circle cx="${temp.snap.x}" cy="${temp.snap.y}" r="${9/cam.s}" fill="none" stroke="${C.verde}" stroke-width="${3/cam.s}"/>`;
   }
   vista.setAttribute("transform",`translate(${cam.x} ${cam.y}) scale(${cam.s})`);
-  vista.innerHTML=s;
-  const p=P();$("nomProy").textContent=p.nombre+(p.cliente?" · "+p.cliente:"");
+  $("capa").innerHTML=s;
+  const p=P();if(modo==="planos")$("nomProy").textContent=p.nombre+(p.cliente?" · "+p.cliente:"");
   pestanas();
 }
 function pestanas(){
   const p=P();let h="";
   for(const pl of p.plantas)h+=`<button data-pl="${pl.id}" class="${pl.id===PL().id?"on":""}">${esc(pl.nombre)}</button>`;
-  h+=`<button data-pl="+">＋ Planta</button><button data-pl="cotas">${cotas?"Ocultar":"Ver"} medidas</button>`;
+  h+=`<button data-pl="fondo">🖼 ${PL().fondo?"Plano de fondo":"Subir plano (foto)"}</button><button data-pl="+">＋ Planta</button><button data-pl="cotas">${cotas?"Ocultar":"Ver"} medidas</button>`;
   if($("tabs").innerHTML!==h)$("tabs").innerHTML=h;
 }
 $("tabs").onclick=async e=>{
   const b=e.target.closest("button");if(!b)return;const id=b.dataset.pl,p=P();
   if(id==="cotas"){cotas=!cotas;dibujar();return}
+  if(id==="fondo"){abrirFondo();return}
   if(id==="+"){const n=await pedir("Nombre de la planta","Planta "+(p.plantas.length+1));if(!n)return;cambio();const pl={id:uid(),nombre:n,paredes:[],cables:[],items:[]};p.plantas.push(pl);p.planta=pl.id;sel=null;fin();panel();return}
   if(id===PL().id){ // segunda pulsación: renombrar / borrar
     const n=await pedir("Nombre de la planta (déjalo vacío para eliminarla)",PL().nombre);if(n===null)return;cambio();
@@ -329,6 +384,7 @@ function limites(pl){let a=1e9,b=1e9,c=-1e9,d=-1e9;
   const add=(x,y)=>{a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)};
   for(const w of pl.paredes.concat(pl.cables)){add(w.x1,w.y1);add(w.x2,w.y2)}
   for(const it of pl.items){const e=Math.max(.35,(it.w||0)/2+.1,it.t==="escalera"?1.3:0);add(it.x-e,it.y-e);add(it.x+e,it.y+e)}
+  if(pl.fondo){const q=cajaFondo(pl.fondo);add(q.x,q.y);add(q.x+q.w,q.y+q.h)}
   return a>c?null:{x:a,y:b,w:c-a,h:d-b}}
 function ajustar(){const r=svg.getBoundingClientRect(),b=limites(PL());
   if(!b){cam.s=45;cam.x=r.width*.12;cam.y=r.height*.15;dibujar();return}
@@ -363,7 +419,7 @@ function paredCercana(p){let best=null;for(const w of PL().paredes){const q=proy
 const ptrs=new Map();let acc=null,pinch=null;
 function aviso(t,ms){const a=$("aviso");if(!t){a.style.display="none";return}a.textContent=t;a.style.display="block";clearTimeout(aviso.t);if(ms)aviso.t=setTimeout(()=>a.style.display="none",ms)}
 function avisoHerr(){
-  const m={pared:"Arrastra para dibujar una pared",hab:"Arrastra para dibujar una habitación",cable:"Arrastra de un punto a otro para tirar cable",texto:"Toca donde quieras poner el texto"};
+  const m={medir:"Toca el principio de una medida conocida (haz zoom para precisión)",fondo:"Arrastra con un dedo para mover el plano de fondo",pared:"Arrastra para dibujar una pared",hab:"Arrastra para dibujar una habitación",cable:"Arrastra de un punto a otro para tirar cable",texto:"Toca donde quieras poner el texto"};
   if(colocar)aviso("Toca el plano para poner: "+T[colocar].n);else aviso(m[herr]||"")}
 svg.addEventListener("pointerdown",e=>{
   svg.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
@@ -372,7 +428,8 @@ svg.addEventListener("pointerdown",e=>{
   if(ptrs.size>2)return;
   const w=aMundo(e.clientX,e.clientY),tg=e.target;
   acc={x0:e.clientX,y0:e.clientY,w0:w,movido:false,camx:cam.x,camy:cam.y};
-  if(colocar||herr==="texto"){acc.tipo="tap";return}
+  if(colocar||herr==="texto"||herr==="medir"){acc.tipo="tap";return}
+  if(herr==="fondo"&&PL().fondo){acc.tipo="fondo";acc.f0={cx:PL().fondo.cx,cy:PL().fondo.cy};return}
   if(herr==="pared"||herr==="cable"||herr==="hab"){const p=ajustarPunto(w,null,herr);acc.tipo="dibujar";
     temp={k:herr,x1:p.x,y1:p.y,x2:p.x,y2:p.y,snap:p.snap};dibujar();return}
   // seleccionar / mover
@@ -393,10 +450,11 @@ svg.addEventListener("pointermove",e=>{
     cam.x+=cx-pinch.cx;cam.y+=cy-pinch.cy;pinch.cx=cx;pinch.cy=cy;zoomEn(d/pinch.d,cx,cy);pinch.d=d;return}
   if(!acc)return;
   const mv=Math.hypot(e.clientX-acc.x0,e.clientY-acc.y0);if(mv>6&&!acc.movido){acc.movido=true;
-    if(["item","linea","extremo"].includes(acc.tipo))cambio()}
+    if(["item","linea","extremo","fondo"].includes(acc.tipo))cambio()}
   if(!acc.movido)return;
   const w=aMundo(e.clientX,e.clientY),pl=PL();
   switch(acc.tipo){
+    case"fondo":{const f=PL().fondo;f.cx=r2(acc.f0.cx+w.x-acc.w0.x);f.cy=r2(acc.f0.cy+w.y-acc.w0.y);pintarFondo();break}
     case"pan":case"tap":cam.x=acc.camx+e.clientX-acc.x0;cam.y=acc.camy+e.clientY-acc.y0;acc.tipo="pan";dibujar();break;
     case"dibujar":{const o={x:temp.x1,y:temp.y1};let p;
       if(herr==="hab"){p={x:r2(rej(w.x)),y:r2(rej(w.y))};const q=ajustarPunto(w,null,"pared");if(q.snap)p=q}else p=ajustarPunto(w,o,herr);
@@ -428,6 +486,7 @@ async function soltar(e){
     else dibujar();
     avisoHerr();return}
   if(a.tipo==="tap"&&!a.movido){const w=aMundo(a.x0,a.y0);
+    if(herr==="medir"){puntoMedida(w);return}
     if(herr==="texto"){const t=await pedir("Texto (por ejemplo: Cocina, Baño, Dormitorio 1)");if(!t)return;cambio();
       const it={id:uid(),t:"texto",x:r2(rej(w.x)),y:r2(rej(w.y)),r:0,txt:t};pl.items.push(it);sel={k:"i",id:it.id};fin();panel();return}
     if(colocar){cambio();let x=r2(rej(w.x)),y=r2(rej(w.y)),r=0;
@@ -437,7 +496,7 @@ async function soltar(e){
       aviso(T[colocar].n+" añadido · toca otra vez para poner más",1800);return}
   }
   if(a.tipo==="pan"&&!a.movido&&herr==="sel"){sel=null;dibujar();panel()}
-  if(a.movido&&["item","linea","extremo"].includes(a.tipo)){fin();aviso("")}
+  if(a.movido&&["item","linea","extremo","fondo"].includes(a.tipo)){fin();if(a.tipo!=="fondo")aviso("")}
 }
 svg.addEventListener("pointerup",soltar);svg.addEventListener("pointercancel",soltar);
 
@@ -459,7 +518,7 @@ $("herr").onclick=e=>{
   if(h==="resumen"){resumen();abrir("vRes");return}
   setHerr(h);
 };
-function setHerr(h,col){herr=h;colocar=col||null;
+function setHerr(h,col){herr=h;colocar=col||null;medirA=null;
   for(const b of $("herr").children)b.classList.toggle("on",b.dataset.h===(colocar?"simb":h));
   if(h!=="sel")sel=null;dibujar();panel();avisoHerr()}
 function abrir(id){$(id).classList.add("on");$(id).firstElementChild.scrollTop=0}
@@ -479,6 +538,8 @@ function panel(){
   const p=$("panel"),pl=PL();let h="";
   if(colocar){h=`<span class="nom">Poniendo: ${T[colocar].n}</span><button class="pb az" data-a="terminar">Terminar</button>`}
   else if(herr==="cable"&&!sel){h=`<span class="nom">Circuito:</span>`+CIRC.map(c=>`<button class="circ ${c.id===circ?"on":""}" style="background:${c.c}" data-circ="${c.id}" title="${c.n}"></button>`).join("")+`<span style="width:100%;color:${C.gris};font-size:12px">${CIRC.find(c=>c.id===circ).n}</span>`}
+  else if(herr==="medir"){h=`<span class="nom">Poner a escala</span><button class="pb" data-a="terminar">Cancelar</button>`}
+  else if(herr==="fondo"){h=`<span class="nom">Mover plano</span><button class="pb" data-a="fRot">⟳ Girar 90°</button><button class="pb az" data-a="terminar">Terminar</button>`}
   else if(herr==="hab"&&!sel){h=`<span class="nom">Por medidas:</span><input id="hW" type="number" inputmode="decimal" step="0.05" placeholder="ancho"> × <input id="hH" type="number" inputmode="decimal" step="0.05" placeholder="largo"> m <button class="pb az" data-a="habMedida">Crear</button>`}
   else if(sel&&sel.k==="i"){const it=pl.items.find(i=>i.id===sel.id);if(!it){sel=null;return panel()}const d=T[it.t];
     h=`<span class="nom">${d.n}</span><button class="pb" data-a="rot">⟳ Girar</button>`;
@@ -499,7 +560,8 @@ $("panel").onclick=async e=>{
   const b=e.target.closest("button");if(!b)return;const pl=PL();
   if(b.dataset.circ){if(sel&&sel.k==="c"){cambio();pl.cables.find(c=>c.id===sel.id).c=b.dataset.circ;circ=b.dataset.circ;fin()}else circ=b.dataset.circ;panel();return}
   const a=b.dataset.a;
-  if(a==="terminar"){setHerr("sel");return}
+  if(a==="terminar"){medirA=null;setHerr("sel");return}
+  if(a==="fRot"&&pl.fondo){cambio();pl.fondo.r=((pl.fondo.r||0)+90)%360;fin();return}
   if(a==="habMedida"){const w=parseFloat(($("hW").value||"").replace(",",".")),h=parseFloat(($("hH").value||"").replace(",","."));
     if(!(w>0&&h>0)){aviso("Pon el ancho y el largo en metros",2000);return}
     const r=svg.getBoundingClientRect(),c=aMundo(r.left+r.width/2,r.top+r.height/2);
@@ -571,8 +633,65 @@ $("listaProy").onclick=async e=>{const t=e.target.closest("[data-abrir],[data-re
 $("bNuevo").onclick=async()=>{const n=await pedir("Nombre del plano (p. ej. Casa Irina, Nave polígono)","");if(!n)return;const c=await pedir("Cliente o dirección (opcional)","")||"";
   const p=nuevoProyecto(n.trim(),c.trim());db.proy.unshift(p);db.cur=p.id;hist=[];rehacer=[];botonesHist();sel=null;guardar();$("vProy").classList.remove("on");setHerr("hab");ajustar()};
 
+// ---------- Plano de fondo (foto o imagen de un plano real) ----------
+const IMG={}, IMGDATA={}, cargando={};
+const IDB={p:null,
+  abrir(){return this.p||(this.p=new Promise((ok,ko)=>{try{const r=indexedDB.open("almara-planos",1);r.onupgradeneeded=()=>r.result.createObjectStore("img");r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)}catch(e){ko(e)}}))},
+  async op(modo,fn){const d=await this.abrir();return new Promise((ok,ko)=>{const t=d.transaction("img",modo),r=fn(t.objectStore("img"));t.oncomplete=()=>ok(r&&r.result);t.onerror=()=>ko(t.error)})},
+  get(k){return this.op("readonly",s=>s.get(k))}, set(k,v){return this.op("readwrite",s=>s.put(v,k))}};
+async function cargarImg(id){if(IMG[id]||cargando[id])return;cargando[id]=1;
+  try{const b=await IDB.get(id);if(b){IMG[id]=URL.createObjectURL(b);dibujar()}}catch(e){} delete cargando[id]}
+function cajaFondo(f){const h=f.w*f.ar,rot=((f.r||0)%180)!==0,W=rot?h:f.w,H=rot?f.w:h;return{x:f.cx-W/2,y:f.cy-H/2,w:W,h:H}}
+function fondoSVG(pl,href){const f=pl.fondo;if(!f)return"";const u=href||IMG[f.img];if(!u){cargarImg(f.img);return""}
+  const h=f.w*f.ar;return `<image href="${u}" x="${-f.w/2}" y="${-h/2}" width="${f.w}" height="${h}" opacity="${f.op??.55}" preserveAspectRatio="none" pointer-events="none" transform="translate(${f.cx} ${f.cy}) rotate(${f.r||0})"/>`}
+let fondoKey="";
+function pintarFondo(){const pl=PL(),f=pl.fondo,k=f?[f.img,f.cx,f.cy,f.w,f.r,f.op,!!IMG[f.img]].join("|"):"";if(k===fondoKey)return;fondoKey=k;$("capaF").innerHTML=fondoSVG(pl)}
+async function dataDeImg(id){if(IMGDATA[id])return IMGDATA[id];const b=await IDB.get(id);if(!b)return null;
+  return IMGDATA[id]=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result);r.readAsDataURL(b)})}
+async function subirFondo(file){aviso("Cargando plano…");
+  try{const url=URL.createObjectURL(file);const im=new Image();await new Promise((ok,ko)=>{im.onload=ok;im.onerror=ko;im.src=url});
+    const k=Math.min(1,2400/Math.max(im.naturalWidth,im.naturalHeight)),cv=document.createElement("canvas");cv.width=Math.round(im.naturalWidth*k);cv.height=Math.round(im.naturalHeight*k);
+    const cx=cv.getContext("2d");cx.fillStyle="#fff";cx.fillRect(0,0,cv.width,cv.height);cx.drawImage(im,0,0,cv.width,cv.height);URL.revokeObjectURL(url);
+    const blob=await new Promise(ok=>cv.toBlob(ok,"image/jpeg",.82));const id="img-"+uid();
+    try{await IDB.set(id,blob)}catch(e){await avisar("Este navegador no deja guardar la imagen: podrás usarla ahora, pero no quedará guardada.")}
+    IMG[id]=URL.createObjectURL(blob);
+    const pl=PL(),bd=limites({...pl,fondo:null});cambio();
+    const w=bd?Math.max(8,bd.w):10;pl.fondo={img:id,ar:cv.height/cv.width,w,cx:bd?bd.x+bd.w/2:w/2,cy:bd?bd.y+bd.h/2:w*cv.height/cv.width/2,r:0,op:.55};
+    fin();ajustar();$("vFondo").classList.remove("on");aviso("");
+    await avisar("Ahora pon el plano a escala: toca el principio y el final de una medida que conozcas (por ejemplo una pared con su cota) y escribe cuántos metros mide.");
+    setHerr("medir")}catch(e){aviso("");await avisar("No se ha podido abrir esa imagen. Prueba con una foto o captura en JPG o PNG.")}}
+let medirA=null;
+async function puntoMedida(w){
+  if(!medirA){medirA=w;aviso("Ahora toca el final de la medida");dibujar();return}
+  const A=medirA,B=w;medirA=null;const med=Math.hypot(B.x-A.x,B.y-A.y);if(med<.05){avisoHerr();dibujar();return}
+  const t=await pedir(`Esa distancia mide ahora ${fmt(med)} m en el plano. ¿Cuántos metros mide en la realidad?`,"");
+  if(!t){setHerr("sel");return}const real=num(t);if(!(real>0)){await avisar("Escribe la medida en metros, por ejemplo 3,45");setHerr("sel");return}
+  const pl=PL(),f=pl.fondo,k=real/med;cambio();
+  f.w*=k;f.cx=A.x+(f.cx-A.x)*k;f.cy=A.y+(f.cy-A.y)*k;
+  // si ya había cosas dibujadas encima, se escalan con el plano
+  const s=v=>v;const esc_=(x,y)=>({x:r2(A.x+(x-A.x)*k),y:r2(A.y+(y-A.y)*k)});
+  if(pl.paredes.length||pl.items.length||pl.cables.length){if(await confirmar("¿Ajustar también lo que ya has dibujado encima a la nueva escala?")){
+    for(const z of pl.paredes.concat(pl.cables)){const p1=esc_(z.x1,z.y1),p2=esc_(z.x2,z.y2);z.x1=p1.x;z.y1=p1.y;z.x2=p2.x;z.y2=p2.y}
+    for(const it of pl.items){const p=esc_(it.x,it.y);it.x=p.x;it.y=p.y}}}
+  setHerr("sel");fin();ajustar();aviso("Plano a escala ✓ · ya puedes poner símbolos encima",2500)}
+function abrirFondo(){const f=PL().fondo;let h="";
+  if(!f)h=`<p style="font-size:14px;color:${C.gris};margin:0 0 6px">Sube una foto o captura del plano de la casa y dibuja encima los puntos de luz, enchufes, líneas…</p>
+    <button class="big az" id="fdSubir">📷 Subir foto o imagen del plano<small>Desde la galería o haciendo la foto ahora</small></button>
+    <small class="ayuda">Consejo: haz la foto recta, desde arriba y con buena luz. Si el plano es un PDF, haz una captura de pantalla y súbela.</small>`;
+  else h=`<button class="big az" id="fdEscala">📏 Poner a escala<small>Toca dos puntos de una medida conocida</small></button>
+    <button class="big" id="fdMover">✥ Mover el plano<small>Arrastra con un dedo; desde ahí también puedes girarlo</small></button>
+    <h3>Transparencia</h3><input type="range" id="fdOp" min="10" max="100" value="${Math.round((f.op??.55)*100)}" style="width:100%">
+    <button class="big" id="fdCambiar">Cambiar imagen</button><button class="big" id="fdQuitar" style="color:${C.rojo}">Quitar plano de fondo</button>`;
+  $("fondoForm").innerHTML=h+`<input type="file" id="fdFile" accept="image/*" hidden>`;$("vFondo").classList.add("on");
+  const pick=()=>$("fdFile").click();if($("fdSubir"))$("fdSubir").onclick=pick;if($("fdCambiar"))$("fdCambiar").onclick=pick;
+  $("fdFile").onchange=e=>{const fl=e.target.files[0];if(fl)subirFondo(fl)};
+  if(f){$("fdEscala").onclick=()=>{$("vFondo").classList.remove("on");setHerr("medir")};
+    $("fdMover").onclick=()=>{$("vFondo").classList.remove("on");setHerr("fondo")};
+    let ini=false;$("fdOp").oninput=e=>{if(!ini){cambio();ini=true}f.op=e.target.value/100;pintarFondo()};$("fdOp").onchange=()=>guardar();
+    $("fdQuitar").onclick=async()=>{if(!await confirmar("¿Quitar el plano de fondo de esta planta?"))return;cambio();delete PL().fondo;$("vFondo").classList.remove("on");fin()}}}
+
 // ---------- Exportar ----------
-function svgExport(pl){
+function svgExport(pl,fd){
   const p=P(),b=limites(pl)||{x:0,y:0,w:4,h:3},n=cuentas(pl);
   const ks=Object.keys(T).filter(k=>n[k]);const usados=new Set(pl.cables.map(c=>c.c));const circs=CIRC.filter(c=>usados.has(c.id));
   const m=.8,W=Math.max(b.w+2*m,9),cab=1.3,filas=Math.ceil((ks.length+circs.length)/3),ley=filas?.7+filas*.45:.2,H=cab+b.h+2*m+ley;
@@ -581,14 +700,14 @@ function svgExport(pl){
   let s=`<svg xmlns="${NS}" viewBox="0 0 ${r2(W)} ${r2(H)}" width="${r2(W)*100}" height="${r2(H)*100}"><rect width="${W}" height="${H}" fill="#fff"/>`;
   s+=`<rect width="${W}" height="${cab}" fill="${C.azul}"/>`+T2(.4,.45,.38,"ALMARA","#fff",800)+T2(.4,.92,.17,"623 916 122 · contacto@almara.group","#B8C7DA",500);
   s+=T2(W-.4,.45,.26,p.nombre+" · "+pl.nombre,"#fff",700,"end")+T2(W-.4,.92,.17,[p.cliente,new Date().toLocaleDateString("es-ES")].filter(Boolean).join(" · "),"#B8C7DA",500,"end");
-  s+=`<g transform="translate(${ox} ${oy})">${escena(pl,{cotas:true})}</g>`;
+  s+=`<g transform="translate(${ox} ${oy})">${escena(pl,{cotas:true,fondo:fd||(fd===undefined&&pl.fondo?IMG[pl.fondo.img]:null)})}</g>`;
   if(filas){const y0=cab+b.h+2*m;s+=`<line x1=".4" y1="${y0}" x2="${W-.4}" y2="${y0}" stroke="#DCE3EC" stroke-width=".02"/>`+T2(.4,y0+.3,.17,"LEYENDA Y CANTIDADES",C.gris,700);
     const cw=(W-.8)/3;let i=0;
     for(const k of ks){const x=.4+(i%3)*cw,y=y0+.75+Math.floor(i/3)*.45;s+=`<g transform="translate(${x+.25} ${y}) scale(.8)">${simb({t:k,x:0,y:0,r:0,w:T[k].w?.6:undefined})}</g>`+T2(x+.65,y,.16,`${T[k].n} × ${n[k]}`,C.azul,600);i++}
     for(const c of circs){const x=.4+(i%3)*cw,y=y0+.75+Math.floor(i/3)*.45;const ml=pl.cables.filter(z=>z.c===c.id).reduce((a,z)=>a+Math.hypot(z.x2-z.x1,z.y2-z.y1),0);
       s+=`<line x1="${x}" y1="${y}" x2="${x+.5}" y2="${y}" stroke="${c.c}" stroke-width=".04" stroke-dasharray=".12 .07"/>`+T2(x+.65,y,.16,`${c.n} · ${fmt(ml,1)} m`,C.azul,600);i++}}
   return s+"</svg>"}
-async function aPng(pl){const s=svgExport(pl);const m=s.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);const W=+m[1],H=+m[2];
+async function aPng(pl){const fd=pl.fondo?await dataDeImg(pl.fondo.img).catch(()=>null):null;const s=svgExport(pl,fd);const m=s.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);const W=+m[1],H=+m[2];
   const k=Math.min(160,Math.max(90,2400/W)),cw=Math.round(W*k),ch=Math.round(H*k);
   const img=new Image();const url=URL.createObjectURL(new Blob([s],{type:"image/svg+xml"}));
   await new Promise((ok,ko)=>{img.onload=ok;img.onerror=ko;img.src=url});
@@ -600,12 +719,361 @@ async function compartir(files){
   for(const f of files){const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}}
 $("ePng").onclick=async()=>{aviso("Preparando imagen…");try{const b=await aPng(PL());await compartir([new File([b],nombreArchivo(PL().nombre,"png"),{type:"image/png"})])}catch(e){await avisar("No se ha podido crear la imagen")}aviso("")};
 $("ePngTodas").onclick=async()=>{aviso("Preparando imágenes…");try{const fs=[];for(const pl of P().plantas){const b=await aPng(pl);fs.push(new File([b],nombreArchivo(pl.nombre,"png"),{type:"image/png"}))}await compartir(fs)}catch(e){await avisar("No se han podido crear las imágenes")}aviso("")};
-$("ePdf").onclick=()=>{$("print").innerHTML=P().plantas.map(svgExport).join("");$("vExp").classList.remove("on");setTimeout(()=>window.print(),200)};
-$("eJson").onclick=()=>compartir([new File([JSON.stringify({almaraPlanos:1,proyecto:P()},null,1)],nombreArchivo("","json"),{type:"application/json"})]);
+$("ePdf").onclick=()=>{$("print").innerHTML=P().plantas.map(pl=>svgExport(pl)).join("");$("vExp").classList.remove("on");setTimeout(()=>window.print(),200)};
+$("eJson").onclick=async()=>{const p=JSON.parse(JSON.stringify(P()));for(const pl of p.plantas)if(pl.fondo)pl.fondo.data=await dataDeImg(pl.fondo.img).catch(()=>null);
+  compartir([new File([JSON.stringify({almaraPlanos:1,proyecto:p})],nombreArchivo("","json"),{type:"application/json"})])};
 $("eImp").onclick=()=>$("fImp").click();
 $("fImp").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());const p=d.proyecto||d;if(!p.plantas)throw 0;
+  for(const pl of p.plantas)if(pl.fondo&&pl.fondo.data){const b=await (await fetch(pl.fondo.data)).blob();pl.fondo.img="img-"+uid();try{await IDB.set(pl.fondo.img,b)}catch(e){}IMG[pl.fondo.img]=URL.createObjectURL(b);delete pl.fondo.data}
   p.id=uid();db.proy.unshift(p);db.cur=p.id;hist=[];rehacer=[];botonesHist();guardar();$("vExp").classList.remove("on");ajustar();aviso("Plano abierto: "+p.nombre,2000)}catch(err){await avisar("Ese archivo no es una copia de ALMARA Planos")}e.target.value=""};
 $("bExp").onclick=()=>abrir("vExp");
+
+const HW=[761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500],HBW=[761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,761,278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556];
+// =====================================================================
+// PRESUPUESTOS
+// =====================================================================
+const LSP="almara-pres-v1", LSE="almara-empresa-v1", LST="almara-tarifas-v1", IVA=0.21;
+const EMP_DEF={marca:"ALMARA",lema:"Starlink · WiFi · Redes · Videovigilancia · Electricidad",titular:"Alin Florei",nie:"",localidad:"Calafell (Tarragona)",
+  telefono:"623 916 122",email:"contacto@almara.group",web:"almara.group",zona:"provincias de Tarragona, Barcelona y Lleida",validez:15,firma:""};
+// Tarifa: p = precio base sin IVA · iva = precio fijo con IVA incluido
+const TARIFA=[
+ {id:"sl",g:"Starlink",c:"Instalación de antena Starlink",d:"Montaje de antena con soporte incluido, configuración y puesta en marcha",iva:175},
+ {id:"wifi",g:"WiFi",c:"Instalación y configuración WiFi mesh",d:"Colocación de nodos, configuración de red y prueba de cobertura",p:70},
+ {id:"wifiext",g:"WiFi",c:"Instalación de punto de acceso WiFi exterior",d:"Montaje en exterior, cableado y configuración",p:70},
+ {id:"red",g:"Redes y racks",c:"Punto de red Cat6",d:"Cable hasta 30 m, caja de superficie y conectores, etiquetado y prueba",p:55},
+ {id:"rack",g:"Redes y racks",c:"Montaje de armario rack y organización",d:"Patch panel, peinado y etiquetado",p:150},
+ {id:"confred",g:"Redes y racks",c:"Configuración de router, switch y WiFi",p:80},
+ {id:"hora",g:"Redes y racks",c:"Hora adicional",d:"Imprevistos, obra difícil o tiradas largas",p:35},
+ {id:"cam",g:"Videovigilancia",c:"Instalación de cámara cableada",p:95},
+ {id:"nvr",g:"Videovigilancia",c:"Configuración del grabador (NVR/DVR) y app en el móvil",p:75},
+ {id:"e_sust",g:"Electricidad · mano de obra",c:"Sustitución de mecanismo en caja existente",p:12},
+ {id:"e_ench",g:"Electricidad · mano de obra",c:"Punto de enchufe nuevo",d:"Desde caja cercana, cableado 2,5 mm2, tubo y caja",p:40},
+ {id:"e_enchT",g:"Electricidad · mano de obra",c:"Punto de enchufe (tubo y caja ya puestos)",d:"Pasar cable 2,5 mm2 y montar mecanismo",p:30},
+ {id:"e_luz",g:"Electricidad · mano de obra",c:"Punto de luz sencillo nuevo",d:"Punto de luz con su interruptor, cableado 1,5 mm2",p:45},
+ {id:"e_luzT",g:"Electricidad · mano de obra",c:"Punto de luz sencillo (tubo y caja ya puestos)",d:"Pasar cable 1,5 mm2 y montar mecanismo",p:35},
+ {id:"e_conm",g:"Electricidad · mano de obra",c:"Punto de luz conmutado",d:"Se enciende desde 2 sitios",p:70},
+ {id:"e_conmT",g:"Electricidad · mano de obra",c:"Punto de luz conmutado (tubo y caja ya puestos)",d:"Se enciende desde 2 sitios",p:55},
+ {id:"e_cruz",g:"Electricidad · mano de obra",c:"Punto de luz con cruzamiento",d:"Se enciende desde 3 sitios o más",p:95},
+ {id:"e_emp",g:"Electricidad · mano de obra",c:"Suplemento instalación empotrada",d:"Roza y tapado básico, sin pintura",p:20},
+ {id:"e_lamp",g:"Electricidad · mano de obra",c:"Colocación de lámpara, plafón o foco",p:20},
+ {id:"e_linea",g:"Electricidad · mano de obra",c:"Línea nueva desde el cuadro",d:"Hasta ~15 m, con su protección en el cuadro",p:110},
+ {id:"e_magn",g:"Electricidad · mano de obra",c:"Sustitución de magnetotérmico o diferencial",p:20},
+ {id:"e_cuadro",g:"Electricidad · mano de obra",c:"Montaje o renovación de cuadro eléctrico",d:"Hasta 8 circuitos, conexionado y etiquetado",p:180},
+ {id:"e_hora",g:"Electricidad · mano de obra",c:"Hora adicional, búsqueda de averías, imprevistos",p:35},
+ {id:"e_min",g:"Electricidad · mano de obra",c:"Servicio mínimo de electricidad",p:50},
+ {id:"m_int",g:"Material eléctrico (Obramat)",c:"Interruptor / conmutador Schneider Asfora blanco",p:3.12},
+ {id:"m_dconm",g:"Material eléctrico (Obramat)",c:"Doble conmutador Schneider Asfora blanco",p:3.87},
+ {id:"m_cruz",g:"Material eléctrico (Obramat)",c:"Cruzamiento Schneider Asfora blanco",p:3.07},
+ {id:"m_puls",g:"Material eléctrico (Obramat)",c:"Pulsador Schneider Asfora blanco",p:2.67},
+ {id:"m_pulsl",g:"Material eléctrico (Obramat)",c:"Pulsador luminoso Schneider Asfora blanco",p:5.67},
+ {id:"m_pers",g:"Material eléctrico (Obramat)",c:"Interruptor de persiana Schneider Asfora blanco",p:7.21},
+ {id:"m_ench",g:"Material eléctrico (Obramat)",c:"Enchufe schuko 16 A Schneider Asfora blanco",p:2.50},
+ {id:"m_enchP",g:"Material eléctrico (Obramat)",c:"Enchufe schuko 16 A Schneider Asfora blanco (pack)",p:2.60},
+ {id:"m_est",g:"Material eléctrico (Obramat)",c:"Enchufe doble estanco IP54 para exterior",p:7.59},
+ {id:"m_rj45",g:"Material eléctrico (Obramat)",c:"Toma de datos RJ45 Cat6 Schneider Asfora blanco",p:7.15},
+ {id:"m_tv",g:"Material eléctrico (Obramat)",c:"Toma TV-R-SAT final Schneider Asfora blanco",p:10.76},
+ {id:"m_tvi",g:"Material eléctrico (Obramat)",c:"Toma TV-SAT intermedia Schneider Asfora blanco",p:15.66},
+ {id:"m_tel",g:"Material eléctrico (Obramat)",c:"Toma de teléfono RJ12 Schneider Asfora blanco",p:3.35},
+ {id:"m_ciega",g:"Material eléctrico (Obramat)",c:"Tapa ciega Schneider Asfora blanco",p:2.02},
+ {id:"m_m2",g:"Material eléctrico (Obramat)",c:"Marco doble Schneider Asfora blanco",p:0.74},
+ {id:"m_m3",g:"Material eléctrico (Obramat)",c:"Marco triple Schneider Asfora blanco",p:1.45},
+ {id:"m_m4",g:"Material eléctrico (Obramat)",c:"Marco cuádruple Schneider Asfora blanco",p:2.62},
+ {id:"m_mg16",g:"Material eléctrico (Obramat)",c:"Magnetotérmico Schneider Resi9 1P+N 16 A",p:3.80},
+ {id:"m_mg25",g:"Material eléctrico (Obramat)",c:"Magnetotérmico Schneider Resi9 1P+N 25 A",p:3.85},
+ {id:"m_c15",g:"Material eléctrico (Obramat)",c:"Cable libre de halógenos H07Z1-K 1,5 mm2 (metros)",p:0.28},
+ {id:"m_c25",g:"Material eléctrico (Obramat)",c:"Cable libre de halógenos H07Z1-K 2,5 mm2 (metros)",p:0.45},
+ {id:"m_c4",g:"Material eléctrico (Obramat)",c:"Cable libre de halógenos H07Z1-K 4 mm2 (metros)",p:0.97},
+ {id:"m_c6",g:"Material eléctrico (Obramat)",c:"Cable libre de halógenos H07Z1-K 6 mm2 (metros)",p:1.41},
+ {id:"m_t16",g:"Material eléctrico (Obramat)",c:"Tubo corrugado 16 mm (metros)",p:0.16},
+ {id:"m_t20",g:"Material eléctrico (Obramat)",c:"Tubo corrugado 20 mm (metros)",p:0.25},
+ {id:"m_t25",g:"Material eléctrico (Obramat)",c:"Tubo corrugado reforzado 25 mm (metros)",p:0.35},
+ {id:"m_caja",g:"Material eléctrico (Obramat)",c:"Caja de mecanismo universal para empotrar",p:0.14},
+ {id:"m_cajap",g:"Material eléctrico (Obramat)",c:"Caja de mecanismo para tabique hueco (pladur)",p:0.55},
+ {id:"mant",g:"Mantenimiento",c:"Cuota de mantenimiento mensual",d:"Soporte remoto, respuesta en 4 h laborables, visita al siguiente día laborable, revisión anual y hasta 3 visitas al año",p:49},
+ {id:"urg",g:"Mantenimiento",c:"Avería urgente sin contrato",d:"Primera hora incluida; después 35 €/h",p:95}
+];
+const NOTA_SL="El kit Starlink (antena y suscripción) lo adquiere el cliente.", NOTA_ASF="Mecanismos Schneider serie Asfora, color blanco.",
+  NOTA_EMP="No incluye pintura ni acabados de yeso.", NOTA_PLANO="Cantidades y metros de cable calculados sobre el plano; la posición final de cada punto se confirmará en obra.";
+let PR={lista:[],sig:28}, EMP={...EMP_DEF}, TOV={}, prCur=null, modo="planos";
+function cargarPres(){try{const a=localStorage.getItem(LSP);if(a)PR=JSON.parse(a);const b=localStorage.getItem(LSE);if(b)EMP={...EMP_DEF,...JSON.parse(b)};const c=localStorage.getItem(LST);if(c)TOV=JSON.parse(c)}catch(e){}}
+function guardarPres(){try{localStorage.setItem(LSP,JSON.stringify(PR))}catch(e){aviso("No se ha podido guardar",2500)}}
+function guardarEmp(){try{localStorage.setItem(LSE,JSON.stringify(EMP));localStorage.setItem(LST,JSON.stringify(TOV))}catch(e){aviso("No se ha podido guardar (¿firma muy grande?)",3000)}}
+const tar=id=>{const t=TARIFA.find(x=>x.id===id);if(!t)return null;const o={...t};if(TOV[id]!==undefined){if(t.iva!==undefined)o.iva=TOV[id];else o.p=TOV[id]}return o};
+const eur=v=>{const s=(Math.round(v*100)/100).toFixed(2).split(".");return s[0].replace(/\B(?=(\d{3})+(?!\d))/g,".")+","+s[1]+" €"};
+const num=v=>parseFloat(String(v).replace(",","."));
+const hoy=()=>new Date().toISOString().slice(0,10);
+const fechaES=f=>{const [a,m,d]=f.split("-");return `${d}/${m}/${a}`};
+const masDias=(f,n)=>{const d=new Date(f+"T12:00:00");d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+function siguienteNumero(){const y=new Date().getFullYear();let mx=PR.sig-1;
+  for(const p of PR.lista){const m=/^P-(\d{4})-(\d+)$/.exec(p.numero||"");if(m&&+m[1]===y)mx=Math.max(mx,+m[2])}
+  return `P-${y}-${String(mx+1).padStart(3,"0")}`}
+function nuevoPres(){const p={id:uid(),numero:siguienteNumero(),fecha:hoy(),tipo:"particular",titulo:"",cliente:{nombre:"",nif:"",direccion:"",contacto:"",telefono:"",email:""},partidas:[],notas:[]};PR.lista.unshift(p);guardarPres();return p}
+function partidaDe(t,q){const o={id:uid(),c:t.c,d:t.d||"",q:q||1};if(t.iva!==undefined)o.iva=t.iva;else o.p=t.p;return o}
+function agregar(pr,t,q,concepto){if(!t||!(q>0))return;const c=concepto||t.c;const ex=pr.partidas.find(x=>x.c===c&&(x.iva??null)===(t.iva??null)&&(x.p??null)===(t.p??null));
+  if(ex)ex.q=Math.round((ex.q+q)*100)/100;else{const o=partidaDe(t,q);o.c=c;pr.partidas.push(o)}
+  if(t.id==="sl"&&!pr.notas.includes(NOTA_SL))pr.notas.push(NOTA_SL);
+  if(/^m_/.test(t.id)&&/Asfora/.test(t.c)&&!pr.notas.includes(NOTA_ASF))pr.notas.push(NOTA_ASF);
+  if(t.id==="e_emp"&&!pr.notas.includes(NOTA_EMP))pr.notas.push(NOTA_EMP)}
+// Cálculo idéntico al de los PDF de ALMARA
+function calcular(pr){const part=pr.tipo!=="empresa";let base=0,tci=0;const filas=[];
+  for(const x of pr.partidas){const q=+x.q||0;let bu,fijo=null;
+    if(x.iva!==undefined&&x.iva!==null){fijo=+x.iva;bu=fijo/(1+IVA)}else bu=+x.p||0;
+    bu=r2(bu);const bl=r2(bu*q);let cu,cl;if(fijo!==null){cu=r2(fijo);cl=r2(fijo*q)}else{cu=r2(bu*(1+IVA));cl=r2(bl*(1+IVA))}
+    base+=bl;tci+=cl;filas.push({x,c:x.c,d:x.d,q,unit:part?cu:bu,imp:part?cl:bl})}
+  base=r2(base);let cuota,total;if(part){total=r2(tci);cuota=r2(total-base)}else{cuota=r2(base*IVA);total=r2(base+cuota)}
+  return{filas,base,cuota,total,part}}
+
+// ---------- Desde el plano ----------
+function desdePlano(pr,proy,op){
+  const n={};let cables={};
+  for(const pl of proy.plantas){for(const it of pl.items)n[it.t]=(n[it.t]||0)+1;for(const c of pl.cables)cables[c.c]=(cables[c.c]||0)+Math.hypot(c.x2-c.x1,c.y2-c.y1)}
+  const g=k=>n[k]||0, T_=op.tubo;const add=(id,q,c)=>agregar(pr,tar(id),q,c);
+  const ptsEnch=g("enchufe")+g("doble")+g("usb")+g("encimera")+g("estanco")+g("extractor");
+  const cruces=g("cruce"), conm=Math.max(0,g("luzc")-cruces), senc=g("luz")+g("aplique")+g("exterior"), lamp=g("foco")+g("led");
+  add(T_?"e_enchT":"e_ench",ptsEnch);add(T_?"e_luzT":"e_luz",senc);add(T_?"e_conmT":"e_conm",conm);add("e_cruz",cruces);add("e_lamp",lamp);
+  if(op.empotrado)add("e_emp",ptsEnch+senc+conm+cruces);
+  const LIN={horno:["HORNO","m_c6","m_t25"],vitro:["VITRO","m_c6","m_t25"],lavadora:["LAVADORA","m_c4","m_t20"],lavavaj:["LAVAVAJILLAS","m_c4","m_t20"],secadora:["SECADORA","m_c4","m_t20"],
+    termo:["TERMO","m_c4","m_t20"],aa:["AIRE ACONDICIONADO","m_c25","m_t20"],ve:["CARGADOR VE","m_c6","m_t25"],linea:["OTRA","m_c25","m_t20"],subida:["SUBIDA A PLANTA","m_c25","m_t20"]};
+  for(const k in LIN)if(g(k))add("e_linea",g(k),"Línea nueva desde el cuadro ("+LIN[k][0].toLowerCase()+")");
+  if(g("cuadro"))add("e_cuadro",g("cuadro"));
+  add("red",g("rj45"));add("wifi",g("ap"));if(g("router"))add("confred",1);add("cam",g("camara"));if(g("camara"))add("nvr",1);
+  add("sl",g("starlink"));add("rack",g("rack"));
+  const sinTarifa=["pir","timbre","ptel","tv"].filter(k=>g(k)).map(k=>T[k].n.toLowerCase()+" ("+g(k)+")");
+  if(op.material){
+    const schuko=g("enchufe")+g("doble")*2+g("usb")+g("encimera")+g("extractor");add(schuko>=5?"m_enchP":"m_ench",schuko);add("m_m2",g("doble"));add("m_est",g("estanco"));
+    let mandos=g("inter")+g("conm");if(!mandos)mandos=senc+conm*2;add("m_int",mandos);add("m_cruz",cruces);add("m_puls",g("puls"));add("m_pers",g("persiana"));
+    add("m_rj45",g("rj45"));add("m_tv",g("tv"));
+    // cable
+    const m={m_c15:0,m_c25:0,m_c4:0,m_c6:0},tub={m_t16:0,m_t20:0,m_t25:0};
+    const dib=Object.keys(cables).length>0;
+    if(dib){const MAP={c1:"m_c15",c2:"m_c25",c5:"m_c25",c6:"m_c25",c0:"m_c25",c4:"m_c4",c3:"m_c6"};
+      for(const k in cables)if(MAP[k])m[MAP[k]]+=cables[k]*3*1.1;
+      if(!T_){for(const k in cables){if(k==="c7")continue;const t=k==="c1"?"m_t16":k==="c3"?"m_t25":"m_t20";tub[t]+=cables[k]*1.1}}}
+    else{m.m_c25+=ptsEnch*18;m.m_c15+=senc*24+(conm+cruces)*40;if(!T_){tub.m_t20+=ptsEnch*6;tub.m_t16+=senc*8+(conm+cruces)*12}
+      for(const k in LIN)if(g(k)){m[LIN[k][1]]+=45*g(k);if(!T_)tub[LIN[k][2]]+=15*g(k)}}
+    for(const k in m)add(k,Math.ceil(m[k]));for(const k in tub)add(k,Math.ceil(tub[k]));
+    if(!T_)add("m_caja",ptsEnch+senc+(conm+cruces)*2);
+    if(!pr.notas.includes(NOTA_PLANO))pr.notas.push(NOTA_PLANO)}
+  if(!pr.cliente.nombre&&proy.cliente)pr.cliente.nombre=proy.cliente;
+  if(!pr.titulo)pr.titulo="Instalación eléctrica"+(proy.nombre?" · "+proy.nombre:"");
+  pr.plano=proy.id;return sinTarifa}
+
+// ---------- Generador de PDF propio (Helvetica, A4) ----------
+const CPM={8364:128,8218:130,402:131,8222:132,8230:133,8224:134,8225:135,710:136,8240:137,352:138,8249:139,338:140,381:142,8216:145,8217:146,8220:147,8221:148,8226:149,8211:150,8212:151,732:152,8482:153,353:154,8250:155,339:156,382:158,376:159,8593:94,8595:118};
+function cp(s){let o="";for(const ch of String(s)){let c=ch.codePointAt(0);if(c>=256||(c>=127&&c<160))c=CPM[c]||63;o+=String.fromCharCode(c)}return o}
+const PT=v=>(v*72/25.4).toFixed(2);
+function anchoMM(t,size,bold){const W=bold?HBW:HW;let w=0;for(let i=0;i<t.length;i++)w+=W[t.charCodeAt(i)]||556;return w/1000*size*25.4/72}
+function partir(s,size,bold,max){const out=[];for(const par of String(s).split("\n")){let l="";for(const w of par.split(/\s+/)){const t=l?l+" "+w:w;if(l&&anchoMM(cp(t),size,bold)>max){out.push(l);l=w}else l=t}out.push(l)}return out}
+class MiniPDF{
+  constructor(){this.pags=[];this.img=null;this.nueva()}
+  nueva(){this.c=[];this.pags.push(this.c)}
+  rgb(h){const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255].map(v=>(v/255).toFixed(3)).join(" ")}
+  rect(x,y,w,h,col){this.c.push(`${this.rgb(col)} rg ${PT(x)} ${PT(297-y-h)} ${PT(w)} ${PT(h)} re f`)}
+  linea(x1,y1,x2,y2,col,w){this.c.push(`${this.rgb(col)} RG ${w||.5} w ${PT(x1)} ${PT(297-y1)} m ${PT(x2)} ${PT(297-y2)} l S`)}
+  txt(x,y,s,size,bold,col,al){const t=cp(s),w=anchoMM(t,size,bold),xx=al==="r"?x-w:al==="c"?x-w/2:x;
+    this.c.push(`BT /${bold?"F2":"F1"} ${size} Tf ${this.rgb(col)} rg ${PT(xx)} ${PT(297-y)} Td (${t.replace(/[\\()]/g,m=>"\\"+m)}) Tj ET`);return w}
+  imagen(jpg,pw,ph,x,y,w,h){this.img={jpg,pw,ph};this.c.push(`q ${PT(w)} 0 0 ${PT(h)} ${PT(x)} ${PT(297-y-h)} cm /Im1 Do Q`)}
+  salida(){const ob=[];const add=s=>{ob.push(s);return ob.length};
+    add("<< /Type /Catalog /Pages 2 0 R >>");add("PAGES");
+    add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
+    add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+    let im=0;if(this.img)im=add(`<< /Type /XObject /Subtype /Image /Width ${this.img.pw} /Height ${this.img.ph} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${this.img.jpg.length} >>\nstream\n${this.img.jpg}\nendstream`);
+    const kids=[];
+    for(const c of this.pags){const s=c.join("\n");const ci=add(`<< /Length ${s.length} >>\nstream\n${s}\nendstream`);
+      kids.push(add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents ${ci} 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >>${im?` /XObject << /Im1 ${im} 0 R >>`:""} >> >>`))}
+    ob[1]=`<< /Type /Pages /Kids [${kids.map(k=>k+" 0 R").join(" ")}] /Count ${kids.length} >>`;
+    let out="%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";const off=[];
+    ob.forEach((o,i)=>{off.push(out.length);out+=`${i+1} 0 obj\n${o}\nendobj\n`});
+    const xr=out.length;out+=`xref\n0 ${ob.length+1}\n0000000000 65535 f \n`+off.map(o=>String(o).padStart(10,"0")+" 00000 n \n").join("");
+    out+=`trailer\n<< /Size ${ob.length+1} /Root 1 0 R >>\nstartxref\n${xr}\n%%EOF`;
+    const b=new Uint8Array(out.length);for(let i=0;i<out.length;i++)b[i]=out.charCodeAt(i)&255;return new Blob([b],{type:"application/pdf"})}
+}
+async function firmaJPG(){if(!EMP.firma)return null;const img=new Image();await new Promise((ok,ko)=>{img.onload=ok;img.onerror=ko;img.src=EMP.firma});
+  const cv=document.createElement("canvas");cv.width=img.naturalWidth;cv.height=img.naturalHeight;const cx=cv.getContext("2d");cx.fillStyle="#fff";cx.fillRect(0,0,cv.width,cv.height);cx.drawImage(img,0,0);
+  return{jpg:atob(cv.toDataURL("image/jpeg",.9).split(",")[1]),w:cv.width,h:cv.height}}
+async function pdfPresupuesto(pr){
+  const AZ="#0B1F3A",AC="#1E88E5",GR="#5F6B7A",LI="#D9DEE5",FO="#F3F6FA",BL="#FFFFFF";
+  const {filas,base,cuota,total,part}=calcular(pr),pdf=new MiniPDF(),E=EMP,cl=pr.cliente||{};
+  const cab=()=>{pdf.rect(0,0,210,34,AZ);pdf.rect(0,34,210,1.2,AC);pdf.txt(18,19,E.marca,26,1,BL);pdf.txt(18,26,(E.lema||"").toUpperCase(),8.5,0,"#B9C7DA");
+    pdf.txt(192,17,"PRESUPUESTO",15,1,BL,"r");pdf.txt(192,24,pr.numero,9.5,0,BL,"r");
+    pdf.linea(18,281,192,281,LI,.5);pdf.txt(18,286,[E.marca,E.localidad,E.telefono,E.email,E.web].filter(Boolean).join(" · "),7.5,0,GR);pdf.txt(192,286,"Página "+pdf.pags.length,7.5,0,GR,"r")};
+  cab();let y=42;
+  const col=(x,w,lab,lineas)=>{let yy=y+3;pdf.txt(x,yy,lab,7.5,1,AC);yy+=1.2;
+    for(const [t,b,s] of lineas)for(const l of partir(t,s,b,w)){yy+=s>9?4.6:4.06;pdf.txt(x,yy,l,s,b,s>9?AZ:GR)}return yy};
+  const y1=col(18,56,"EMISOR",[[E.marca,1,9.5],[E.titular+(E.nie?" · NIE "+E.nie:""),0,8.5],[E.localidad,0,8.5],[E.telefono+" · "+E.email,0,8.5]]);
+  const lc=[[cl.nombre||"—",1,9.5]];for(const [k,pre] of [["contacto","Att.: "],["nif","NIF/CIF: "],["direccion",""],["telefono","Tel.: "],["email",""]])if(cl[k])lc.push([pre+cl[k],0,8.5]);
+  const y2=col(76,70,"CLIENTE",lc);
+  let yy=y+3;pdf.txt(148,yy,"DATOS",7.5,1,AC);yy+=1.2;
+  for(const [a,b] of [["Fecha: ",fechaES(pr.fecha)],["Válido hasta: ",fechaES(masDias(pr.fecha,+E.validez||15))],["Nº: ",pr.numero]]){yy+=4.06;const w=pdf.txt(148,yy,a,8.5,0,GR);pdf.txt(148+w,yy,b,8.5,1,GR)}
+  y=Math.max(y1,y2,yy)+8;
+  if(pr.titulo){for(const l of partir(pr.titulo,14,1,174)){y+=5.5;pdf.txt(18,y,l,14,1,AZ)}y+=5}
+  const enc=()=>{pdf.rect(18,y,174,7.5,AZ);const b=y+5;pdf.txt(20,b,"Concepto",9,1,BL);pdf.txt(132,b,"Cant.",9,1,BL,"r");pdf.txt(162,b,part?"Precio (IVA incl.)":"Precio",9,1,BL,"r");pdf.txt(190,b,"Importe",9,1,BL,"r");y+=7.5};
+  enc();
+  filas.forEach((f,i)=>{const lc_=partir(f.c,9.5,1,96),ld=f.d?partir(f.d,8.5,0,96):[];const h=3.4+lc_.length*4.4+ld.length*4.06;
+    if(y+h>272){pdf.nueva();cab();y=42;enc()}
+    if(i%2===1)pdf.rect(18,y,174,h,FO);let ty=y+1.7;
+    for(const l of lc_){ty+=4.4;pdf.txt(20,ty-1,l,9.5,1,AZ)}for(const l of ld){ty+=4.06;pdf.txt(20,ty-1,l,8.5,0,GR)}
+    const cy=y+h/2+1.2,qs=Number.isInteger(f.q)?String(f.q):String(f.q).replace(".",",");
+    pdf.txt(132,cy,qs,9,0,AZ,"r");pdf.txt(162,cy,eur(f.unit),9,0,AZ,"r");pdf.txt(190,cy,eur(f.imp),9,0,AZ,"r");
+    y+=h;pdf.linea(18,y,192,y,LI,.5)});
+  y+=5;if(y+24>272){pdf.nueva();cab();y=42}
+  if(part){pdf.rect(18,y,174,10,AC);pdf.txt(21,y+6.6,"TOTAL (IVA incluido)",12,1,BL);pdf.txt(189,y+6.6,eur(total),12,1,BL,"r");
+    pdf.txt(189,y+15,`Base imponible ${eur(base)} · IVA 21 % ${eur(cuota)}`,8,0,GR,"r");y+=19}
+  else{const x0=118;pdf.txt(x0+2,y+5,"Base imponible",9.5,0,AZ);pdf.txt(190,y+5,eur(base),9.5,0,AZ,"r");y+=7.5;pdf.linea(x0,y,192,y,LI,.5);
+    pdf.txt(x0+2,y+5,"IVA (21 %)",9.5,0,AZ);pdf.txt(190,y+5,eur(cuota),9.5,0,AZ,"r");y+=7.5;pdf.linea(x0,y,192,y,LI,.5);
+    pdf.rect(x0,y,74,9,AC);pdf.txt(x0+2,y+6.2,"TOTAL",12,1,BL);pdf.txt(190,y+6.2,eur(total),12,1,BL,"r");y+=13}
+  y+=6;
+  const cond=[`Presupuesto válido durante ${E.validez||15} días desde su fecha.`,`Desplazamiento incluido en las ${E.zona}.`].concat(pr.notas.filter(n=>n.trim()));
+  const lcond=cond.map(c=>partir("• "+c,8.5,0,174));const hc=6+lcond.flat().length*4.06;
+  if(y+hc+30>275){pdf.nueva();cab();y=42}
+  pdf.txt(18,y,"CONDICIONES",7.5,1,AC);y+=1;for(const g of lcond)for(const l of g){y+=4.06;pdf.txt(18,y,l,8.5,0,GR)}
+  y+=9;pdf.txt(18,y,"ACEPTACIÓN DEL CLIENTE",7.5,1,AC);pdf.txt(112,y,E.marca,7.5,1,AC);y+=4.5;
+  pdf.txt(18,y,"Firma y fecha:",8.5,0,GR);const wf=pdf.txt(112,y,"Firma:",8.5,0,GR);
+  const f=await firmaJPG().catch(()=>null);
+  if(f){const esc=Math.min(15.5/f.h,53/f.w);pdf.imagen(f.jpg,f.w,f.h,112+wf+5,y+1,f.w*esc,f.h*esc)}
+  pdf.linea(18,y+18,98,y+18,GR,.6);pdf.linea(112,y+18,192,y+18,GR,.6);
+  return pdf.salida()}
+
+// ---------- Interfaz de presupuestos ----------
+function setModo(m){modo=m;$("app").classList.toggle("mpres",m==="pres");
+  for(const b of document.querySelectorAll(".modo button"))b.classList.toggle("on",b.dataset.m===m);
+  if(m==="pres"){prCur?editorPres():listaPres()}else{dibujar();ajustar()}}
+document.querySelector(".modo").onclick=e=>{const b=e.target.closest("[data-m]");if(b)setModo(b.dataset.m)};
+function listaPres(){prCur=null;const tot=p=>calcular(p).total;let h=`<div class="pcont">
+  <button class="big az" data-pa="nuevo">＋ Nuevo presupuesto</button>
+  <button class="big" data-pa="nuevoPlano">▦ Nuevo desde un plano<small>Cuenta enchufes, luces, líneas y cable del plano y aplica tus tarifas</small></button>
+  <h3>Presupuestos guardados</h3>`;
+  if(!PR.lista.length)h+=`<p class="vacio">Todavía no hay presupuestos en este móvil.</p>`;
+  for(const p of PR.lista)h+=`<div class="fila tarjeta" data-abrir="${p.id}"><div class="q"><b>${esc(p.numero)} · ${esc(p.cliente.nombre||"Sin cliente")}</b><small>${esc(p.titulo||"Sin título")} · ${fechaES(p.fecha)}</small></div><b class="imp">${eur(tot(p))}</b></div>`;
+  h+=`<button class="big" data-pa="ajustes" style="margin-top:18px">⚙ Datos de empresa, firma y tarifas</button></div>`;
+  $("pres").innerHTML=h;$("nomProy").textContent="Presupuestos";$("pres").scrollTop=0}
+function editorPres(){const p=prCur;$("nomProy").textContent=p.numero;const c=p.cliente;
+  $("pres").innerHTML=`<div class="pcont">
+  <button class="volver" data-pa="volver">‹ Presupuestos</button>
+  <div class="caja"><div class="g2"><label>Número<input data-f="numero" value="${esc(p.numero)}"></label><label>Fecha<input type="date" data-f="fecha" value="${p.fecha}"></label></div>
+  <div class="seg"><button data-tipo="particular" class="${p.tipo!=="empresa"?"on":""}">Particular<small>IVA incluido</small></button><button data-tipo="empresa" class="${p.tipo==="empresa"?"on":""}">Empresa<small>IVA desglosado</small></button></div>
+  <label>Título<input data-f="titulo" value="${esc(p.titulo)}" placeholder="p. ej. Instalación eléctrica vivienda"></label></div>
+  <h3>Cliente</h3><div class="caja">
+  <label>Nombre o razón social<input data-c="nombre" value="${esc(c.nombre)}"></label>
+  <div class="g2"><label>NIF/CIF<input data-c="nif" value="${esc(c.nif)}"></label><label>Teléfono<input data-c="telefono" inputmode="tel" value="${esc(c.telefono)}"></label></div>
+  <label>Dirección<input data-c="direccion" value="${esc(c.direccion)}"></label>
+  <div class="g2"><label>Persona de contacto<input data-c="contacto" value="${esc(c.contacto)}"></label><label>Email<input data-c="email" inputmode="email" value="${esc(c.email)}"></label></div></div>
+  <h3>Partidas</h3><div id="partidas"></div>
+  <div class="g2 bots"><button class="pb az" data-pa="tarifa">＋ De la tarifa</button><button class="pb" data-pa="plano">▦ Del plano</button><button class="pb" data-pa="libre">＋ Partida libre</button><button class="pb" data-pa="material">＋ Material (coste + margen)</button></div>
+  <h3>Condiciones del trabajo</h3><div class="caja"><textarea data-f="notas" rows="4" placeholder="Una por línea">${esc(p.notas.join("\n"))}</textarea>
+  <small class="ayuda">La validez de ${EMP.validez} días y el desplazamiento incluido ya salen siempre en el PDF.</small></div>
+  <div class="g2 bots"><button class="pb" data-pa="duplicar">Duplicar</button><button class="pb rojo" data-pa="borrar">Eliminar presupuesto</button></div>
+  <div style="height:90px"></div></div>
+  <div class="barraTotal"><div><small id="totLab"></small><b id="totVal"></b></div><button class="pb az" data-pa="pdf">PDF</button></div>`;
+  pintarPartidas()}
+function pintarPartidas(){const p=prCur,k=calcular(p);let h="";
+  if(!k.filas.length)h=`<p class="vacio">Añade partidas de tu tarifa o cárgalas desde un plano.</p>`;
+  for(const f of k.filas)h+=`<div class="part" data-part="${f.x.id}"><div class="pc"><b>${esc(f.c)}</b>${f.d?`<small>${esc(f.d)}</small>`:""}</div>
+    <div class="pq"><button data-q="-">−</button><span>${String(f.q).replace(".",",")}</span><button data-q="+">+</button></div>
+    <div class="pi"><small>${eur(f.unit)}</small><b>${eur(f.imp)}</b></div></div>`;
+  $("partidas").innerHTML=h;
+  $("totLab").textContent=k.part?`Base ${eur(k.base)} · IVA ${eur(k.cuota)}`:`Base ${eur(k.base)} + IVA ${eur(k.cuota)}`;
+  $("totVal").textContent="Total "+eur(k.total)+(k.part?" (IVA incl.)":"")}
+$("pres").addEventListener("input",e=>{const t=e.target,p=prCur;if(!p)return;
+  if(t.dataset.f){if(t.dataset.f==="notas")p.notas=t.value.split("\n");else p[t.dataset.f]=t.value}
+  if(t.dataset.c)p.cliente[t.dataset.c]=t.value;
+  if(t.dataset.f==="numero")$("nomProy").textContent=t.value;guardarPres()});
+$("pres").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-pa],[data-abrir],[data-tipo],[data-q],[data-part]");if(!b)return;
+  if(b.dataset.abrir){prCur=PR.lista.find(x=>x.id===b.dataset.abrir);editorPres();$("pres").scrollTop=0;return}
+  if(b.dataset.tipo){prCur.tipo=b.dataset.tipo;guardarPres();for(const x of document.querySelectorAll("[data-tipo]"))x.classList.toggle("on",x===b);pintarPartidas();return}
+  if(b.dataset.q){const id=b.closest("[data-part]").dataset.part,x=prCur.partidas.find(z=>z.id===id);x.q=Math.max(0,Math.round((x.q+(b.dataset.q==="+"?1:-1))*100)/100);
+    if(x.q===0&&await confirmar("¿Quitar «"+x.c+"»?"))prCur.partidas=prCur.partidas.filter(z=>z!==x);else if(x.q===0)x.q=1;guardarPres();pintarPartidas();return}
+  if(b.dataset.part){editarPartida(prCur.partidas.find(z=>z.id===b.dataset.part));return}
+  const a=b.dataset.pa;
+  if(a==="nuevo"){prCur=nuevoPres();editorPres();return}
+  if(a==="nuevoPlano"){abrirImport(true);return}
+  if(a==="volver"){listaPres();return}
+  if(a==="ajustes"){abrirAjustes();return}
+  if(a==="tarifa"){abrirTarifa();return}
+  if(a==="plano"){abrirImport(false);return}
+  if(a==="libre"){const o={id:uid(),c:"",d:"",q:1,p:0};editarPartida(o,true);return}
+  if(a==="material"){const o={id:uid(),c:"",d:"",q:1,p:0,coste:"",margen:15};editarPartida(o,true,true);return}
+  if(a==="duplicar"){const n=JSON.parse(JSON.stringify(prCur));n.id=uid();n.numero=siguienteNumero();n.fecha=hoy();PR.lista.unshift(n);prCur=n;guardarPres();editorPres();aviso("Copia creada: "+n.numero,2000);return}
+  if(a==="borrar"){if(!await confirmar("¿Eliminar el presupuesto "+prCur.numero+"?"))return;PR.lista=PR.lista.filter(x=>x!==prCur);guardarPres();listaPres();return}
+  if(a==="pdf"){if(!prCur.partidas.length){await avisar("El presupuesto no tiene partidas todavía.");return}
+    aviso("Creando PDF…");try{const blob=await pdfPresupuesto(prCur);const nom=("Presupuesto_"+prCur.numero+(prCur.cliente.nombre?"_"+prCur.cliente.nombre:"")).replace(/[\\/:*?"<>|]/g,"").replace(/\s+/g,"_")+".pdf";
+      await compartir([new File([blob],nom,{type:"application/pdf"})])}catch(err){await avisar("No se ha podido crear el PDF")}aviso("");return}
+});
+// Hoja: editar partida
+function editarPartida(x,nueva,material){
+  const v=$("vPart"),fijo=x.iva!==undefined&&x.iva!==null;
+  $("partForm").innerHTML=`<label>Concepto<input id="pfC" value="${esc(x.c)}"></label><label>Descripción (opcional)<input id="pfD" value="${esc(x.d||"")}"></label>
+   <div class="g2"><label>Cantidad<input id="pfQ" type="number" inputmode="decimal" step="any" value="${x.q}"></label>
+   <label>${fijo?"Precio con IVA (€)":"Precio sin IVA (€)"}<input id="pfP" type="number" inputmode="decimal" step="any" value="${fijo?x.iva:x.p}"></label></div>
+   ${material?`<div class="caja" style="margin-top:8px"><b style="font-size:13px">Calcular desde lo que te cuesta</b><div class="g2"><label>Coste con IVA (€)<input id="pfCo" type="number" inputmode="decimal" step="any" value="${x.coste||""}"></label><label>Margen %<input id="pfM" type="number" inputmode="decimal" value="${x.margen??15}"></label></div><small class="ayuda">Precio = coste ÷ 1,21 × (1 + margen). Material eléctrico 10 %, resto 15 %. El coste no sale en el PDF.</small></div>`:""}
+   <label class="chk"><input type="checkbox" id="pfF" ${fijo?"checked":""}> El precio ya incluye IVA (como Starlink 175 €)</label>`;
+  $("pfDel").style.display=nueva?"none":"";v.classList.add("on");setTimeout(()=>$("pfC").focus(),80);
+  const calc=()=>{const co=num($("pfCo").value),m=num($("pfM").value);if(co>0&&m>=0){$("pfP").value=r2(co/1.21*(1+m/100));$("pfF").checked=false}};
+  if(material){$("pfCo").oninput=calc;$("pfM").oninput=calc}
+  $("pfOk").onclick=()=>{const c=$("pfC").value.trim();if(!c){aviso("Pon el concepto",1500);return}
+    x.c=c;x.d=$("pfD").value.trim();x.q=num($("pfQ").value)||1;const pv=num($("pfP").value)||0;
+    if($("pfF").checked){x.iva=pv;delete x.p}else{x.p=pv;delete x.iva}
+    if(material){x.coste=$("pfCo").value;x.margen=num($("pfM").value)}
+    if(nueva)prCur.partidas.push(x);guardarPres();v.classList.remove("on");pintarPartidas()};
+  $("pfDel").onclick=()=>{prCur.partidas=prCur.partidas.filter(z=>z!==x);guardarPres();v.classList.remove("on");pintarPartidas()};
+}
+// Hoja: tarifa
+function abrirTarifa(){const v=$("vTar");$("tarBus").value="";pintarTarifa("");v.classList.add("on")}
+function pintarTarifa(q){q=q.toLowerCase();let h="",g0="";
+  for(const t0 of TARIFA){const t=tar(t0.id);if(q&&!(t.c+" "+t.g).toLowerCase().includes(q))continue;
+    if(t.g!==g0){h+=`<h3>${t.g}</h3>`;g0=t.g}
+    h+=`<div class="fila tarjeta" data-tid="${t.id}"><div class="q"><b>${esc(t.c)}</b>${t.d?`<small>${esc(t.d)}</small>`:""}</div><b class="imp">${t.iva!==undefined?eur(t.iva)+"<small> IVA incl.</small>":eur(t.p)}</b></div>`}
+  $("tarLista").innerHTML=h||`<p class="vacio">Nada con ese nombre.</p>`}
+$("tarBus").oninput=e=>pintarTarifa(e.target.value);
+$("tarLista").onclick=e=>{const r=e.target.closest("[data-tid]");if(!r)return;agregar(prCur,tar(r.dataset.tid),1);guardarPres();pintarPartidas();
+  r.classList.add("ok");setTimeout(()=>r.classList.remove("ok"),500);aviso("Añadido: "+tar(r.dataset.tid).c,1300)};
+// Hoja: importar desde plano
+let impNuevo=false;
+function abrirImport(nuevo){impNuevo=nuevo;let h="";
+  for(const p of db.proy){const n=p.plantas.reduce((s,pl)=>s+pl.items.filter(i=>!NO_CUENTA[i.t]).length,0);
+    h+=`<label class="fila tarjeta"><input type="radio" name="impP" value="${p.id}" ${p.id===db.cur?"checked":""}><div class="q"><b>${esc(p.nombre)}</b><small>${esc(p.cliente||"Sin cliente")} · ${n} puntos</small></div></label>`}
+  $("impLista").innerHTML=h;$("vImp").classList.add("on")}
+$("impOk").onclick=async()=>{const r=document.querySelector("[name=impP]:checked");if(!r)return;const proy=db.proy.find(p=>p.id===r.value);
+  if(impNuevo){prCur=nuevoPres()}
+  const antes=prCur.partidas.length;
+  const sin=desdePlano(prCur,proy,{tubo:$("impTubo").checked,empotrado:$("impEmp").checked,material:$("impMat").checked});
+  guardarPres();$("vImp").classList.remove("on");editorPres();
+  const n=prCur.partidas.length-antes;
+  await avisar(`Añadidas o actualizadas ${Math.max(n,0)} partidas desde «${proy.nombre}».`+(sin.length?` Sin tarifa, añádelos a mano: ${sin.join(", ")}.`:"")+" Revisa cantidades y metros antes de enviarlo.")};
+// Hoja: ajustes de empresa, firma y tarifas
+function abrirAjustes(){const E=EMP;
+  $("ajForm").innerHTML=`<div class="caja">${[["marca","Marca"],["lema","Lema (cabecera)"],["titular","Titular"],["nie","NIE (sale en el PDF)"],["localidad","Localidad"],["telefono","Teléfono"],["email","Email"],["web","Web"],["zona","Zona (desplazamiento incluido)"]].map(([k,l])=>`<label>${l}<input data-e="${k}" value="${esc(E[k]||"")}"></label>`).join("")}
+   <div class="g2"><label>Validez (días)<input data-e="validez" type="number" value="${E.validez}"></label><label>Siguiente nº<input id="ajSig" type="number" value="${PR.sig}"></label></div>
+   <small class="ayuda">El número se pone solo: el siguiente al más alto guardado del año, o este si es mayor.</small></div>
+   <h3>Firma</h3><div class="caja"><canvas id="firmaCv" width="600" height="220"></canvas>
+   <div class="g2 bots"><button class="pb" id="fBorrar">Borrar</button><button class="pb" id="fSubir">Subir imagen</button></div><input type="file" id="fFile" accept="image/*" hidden>
+   <small class="ayuda">Firma con el dedo en el recuadro. Se guarda solo en este móvil.</small></div>
+   <h3>Mis tarifas</h3><div class="caja">${TARIFA.map(t=>`<div class="trow"><span>${esc(t.c)}</span><input data-tov="${t.id}" type="number" inputmode="decimal" step="any" value="${TOV[t.id]??(t.iva!==undefined?t.iva:t.p)}"></div>`).join("")}
+   <small class="ayuda">Precios sin IVA, salvo Starlink (con IVA). Material eléctrico: precio de venta sin IVA (Obramat ÷ 1,21 × 1,10).</small></div>`;
+  $("vAj").classList.add("on");firmaPad()}
+function firmaPad(){const cv=$("firmaCv"),cx=cv.getContext("2d");let dib=false,ult=null,cambiada=false;
+  const limpiar=()=>{cx.fillStyle="#fff";cx.fillRect(0,0,cv.width,cv.height);cx.strokeStyle="#E3E8EF";cx.lineWidth=2;cx.beginPath();cx.moveTo(30,170);cx.lineTo(570,170);cx.stroke()};
+  limpiar();if(EMP.firma){const i=new Image();i.onload=()=>{const k=Math.min(cv.width/i.width,cv.height/i.height);cx.drawImage(i,(cv.width-i.width*k)/2,(cv.height-i.height*k)/2,i.width*k,i.height*k)};i.src=EMP.firma}
+  const pos=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}};
+  cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);dib=true;ult=pos(e);if(!cambiada&&EMP.firma){limpiar()}cambiada=true};
+  cv.onpointermove=e=>{if(!dib)return;const p=pos(e);cx.strokeStyle="#0B1F3A";cx.lineWidth=4;cx.lineCap="round";cx.beginPath();cx.moveTo(ult.x,ult.y);cx.lineTo(p.x,p.y);cx.stroke();ult=p};
+  cv.onpointerup=cv.onpointercancel=()=>{if(dib){dib=false;EMP.firma=recortar(cv);guardarEmp()}};
+  $("fBorrar").onclick=()=>{limpiar();EMP.firma="";cambiada=true;guardarEmp()};
+  $("fSubir").onclick=()=>$("fFile").click();
+  $("fFile").onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const i=new Image();i.onload=()=>{
+    const k=Math.min(1,800/i.width);const c2=document.createElement("canvas");c2.width=i.width*k;c2.height=i.height*k;const x2=c2.getContext("2d");x2.fillStyle="#fff";x2.fillRect(0,0,c2.width,c2.height);x2.drawImage(i,0,0,c2.width,c2.height);
+    EMP.firma=c2.toDataURL("image/png");guardarEmp();cambiada=false;firmaPad()};i.src=rd.result};rd.readAsDataURL(f)}}
+function recortar(cv){const cx=cv.getContext("2d"),d=cx.getImageData(0,0,cv.width,cv.height).data;let a=cv.width,b=cv.height,c=0,e=0;
+  for(let y=0;y<cv.height;y++)for(let x=0;x<cv.width;x++){const i=(y*cv.width+x)*4;if(d[i]<120&&d[i+2]<160){a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);e=Math.max(e,y)}}
+  if(c<=a)return"";const m=8,w=c-a+2*m,h=e-b+2*m,o=document.createElement("canvas");o.width=w;o.height=h;const ox=o.getContext("2d");ox.fillStyle="#fff";ox.fillRect(0,0,w,h);
+  ox.drawImage(cv,a-m,b-m,w,h,0,0,w,h);return o.toDataURL("image/png")}
+$("ajForm").addEventListener("input",e=>{const t=e.target;
+  if(t.dataset.e){EMP[t.dataset.e]=t.dataset.e==="validez"?(parseInt(t.value)||15):t.value;guardarEmp()}
+  if(t.id==="ajSig"){PR.sig=parseInt(t.value)||PR.sig;guardarPres()}
+  if(t.dataset.tov){const v=num(t.value);if(v>=0)TOV[t.dataset.tov]=v;guardarEmp()}});
+document.querySelectorAll("#vPart,#vTar,#vImp,#vAj").forEach(v=>v.addEventListener("click",e=>{if(e.target===v||e.target.closest("[data-cerrar]")){v.classList.remove("on");if(v.id==="vAj"&&!prCur)listaPres()}}));
+cargarPres();
 
 // ---------- Inicio ----------
 window.addEventListener("resize",()=>dibujar());

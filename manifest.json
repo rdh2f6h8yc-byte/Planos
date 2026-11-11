@@ -1,7 +1,7 @@
 {
   "name": "ALMARA Planos",
   "short_name": "Planos",
-  "description": "Editor de planos eléctricos de ALMARA",
+  "description": "Planos eléctricos y presupuestos de ALMARA",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
