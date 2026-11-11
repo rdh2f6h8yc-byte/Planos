@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B1F3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ALMARA Planos">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>ALMARA Planos</title>
+<style>
+:root{--azul:#0B1F3A;--acento:#1E88E5;--gris:#5F6B7A;--claro:#EEF2F7;--borde:#D6DEE8;--rojo:#C62828;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--azul);overscroll-behavior:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+#app{position:fixed;inset:0;display:flex;flex-direction:column}
+header{background:var(--azul);color:#fff;padding:calc(var(--st) + 6px) 8px 6px;display:flex;align-items:center;gap:4px}
+header .tit{flex:1;min-width:0;padding:0 4px}
+header .tit b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .tit small{display:block;font-size:11px;opacity:.7;letter-spacing:.08em}
+.ib{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:20px}
+.ib:active{background:rgba(255,255,255,.15)}
+.ib[disabled]{opacity:.35}
+#tabs{display:flex;gap:6px;padding:6px 8px;overflow-x:auto;background:var(--claro);border-bottom:1px solid var(--borde);scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+#tabs button{flex:none;padding:6px 12px;border-radius:16px;background:#fff;border:1px solid var(--borde);font-size:13px;font-weight:600}
+#tabs button.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+#lienzo{flex:1;position:relative;overflow:hidden;background:#fff}
+#plano{position:absolute;inset:0;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+#aviso{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:rgba(11,31,58,.88);color:#fff;font-size:13px;padding:6px 12px;border-radius:14px;pointer-events:none;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;display:none}
+#zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}
+#zoom button{width:38px;height:38px;border-radius:10px;background:#fff;border:1px solid var(--borde);box-shadow:0 1px 4px rgba(0,0,0,.08);font-size:18px;font-weight:700}
+#panel{background:#fff;border-top:1px solid var(--borde);padding:8px;display:none;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px}
+#panel.on{display:flex}
+#panel .nom{font-weight:700;margin-right:auto;font-size:14px}
+.pb{padding:8px 11px;border-radius:9px;background:var(--claro);font-weight:600;font-size:13px;white-space:nowrap}
+.pb.rojo{background:#FDECEC;color:var(--rojo)}
+.pb.az{background:var(--azul);color:#fff}
+#panel input{width:70px;padding:7px;border:1px solid var(--borde);border-radius:8px;font:inherit;font-size:16px}
+.circ{width:28px;height:28px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px var(--borde)}
+.circ.on{box-shadow:0 0 0 2px var(--azul)}
+nav{display:flex;background:var(--azul);padding:4px 2px calc(var(--sb) + 4px);overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:1 0 auto;min-width:56px;color:#B8C7DA;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 4px;border-radius:10px;font-size:10.5px;font-weight:600}
+nav button span{font-size:20px;line-height:22px}
+nav button.on{color:#fff;background:rgba(255,255,255,.14)}
+.velo{position:fixed;inset:0;background:rgba(11,31,58,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.velo.on{display:flex}
+.hoja{background:#fff;width:100%;max-width:640px;max-height:84vh;overflow:auto;border-radius:18px 18px 0 0;padding:14px 14px calc(var(--sb) + 18px)}
+.hoja h2{margin:2px 0 10px;font-size:18px;display:flex;align-items:center}
+.hoja h2 .x{margin-left:auto;font-size:22px;width:36px;height:36px}
+.hoja h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin:14px 0 6px}
+.rej{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.rej button{border:1px solid var(--borde);border-radius:12px;padding:6px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;font-weight:600;line-height:1.15;text-align:center}
+.rej button:active{background:var(--claro)}
+.rej svg{width:52px;height:40px}
+.fila{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--claro)}
+.fila .q{flex:1;min-width:0}
+.fila .q b{display:block}
+.fila .q small{color:var(--gris)}
+.fila.on b{color:var(--acento)}
+.lista{width:100%;border-collapse:collapse;font-size:14px}
+.lista td{padding:6px 2px;border-bottom:1px solid var(--claro)}
+.lista td:last-child{text-align:right;font-weight:700}
+.big{display:block;width:100%;padding:13px;border-radius:12px;background:var(--claro);font-weight:700;margin-top:8px;text-align:left;font-size:15px}
+.big.az{background:var(--azul);color:#fff}
+.big small{display:block;font-weight:500;opacity:.75;font-size:12px}
+#print{display:none}
+@media print{
+  @page{size:A4 landscape;margin:8mm}
+  #app,.velo{display:none!important}
+  html,body{height:auto;overflow:visible}
+  #print{display:block}
+  #print svg{width:100%;height:auto;max-height:190mm;page-break-after:always;break-after:page}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="ib" id="bProy" title="Proyectos">☰</button>
+    <div class="tit"><small>ALMARA · PLANOS</small><b id="nomProy">—</b></div>
+    <button class="ib" id="bUndo" title="Deshacer">↶</button>
+    <button class="ib" id="bRedo" title="Rehacer">↷</button>
+    <button class="ib" id="bExp" title="Exportar">⇪</button>
+  </header>
+  <div id="tabs"></div>
+  <div id="lienzo">
+    <svg id="plano" xmlns="http://www.w3.org/2000/svg"><g id="vista"></g></svg>
+    <div id="aviso"></div>
+    <div id="zoom"><button id="zMas">+</button><button id="zMenos">−</button><button id="zAjustar" style="font-size:14px">⤢</button></div>
+  </div>
+  <div id="panel"></div>
+  <nav id="herr">
+    <button data-h="sel" class="on"><span>✋</span>Mover</button>
+    <button data-h="pared"><span>▬</span>Pared</button>
+    <button data-h="hab"><span>▢</span>Habitación</button>
+    <button data-h="simb"><span>⊕</span>Símbolos</button>
+    <button data-h="cable"><span>〰</span>Cable</button>
+    <button data-h="texto"><span>T</span>Texto</button>
+    <button data-h="resumen"><span>Σ</span>Resumen</button>
+  </nav>
+</div>
+
+<div class="velo" id="vSimb"><div class="hoja"><h2>Añadir símbolo <button class="x" data-cerrar>×</button></h2><div id="paleta"></div></div></div>
+<div class="velo" id="vProy"><div class="hoja"><h2>Proyectos <button class="x" data-cerrar>×</button></h2><div id="listaProy"></div>
+  <button class="big az" id="bNuevo">＋ Nuevo plano desde cero</button></div></div>
+<div class="velo" id="vRes"><div class="hoja"><h2>Resumen y mediciones <button class="x" data-cerrar>×</button></h2><div id="resumen"></div>
+  <button class="big az" id="bCopiar">Copiar resumen<small>Para pegarlo en WhatsApp o pasármelo para el presupuesto</small></button></div></div>
+<div class="velo" id="vExp"><div class="hoja"><h2>Exportar y compartir <button class="x" data-cerrar>×</button></h2>
+  <button class="big az" id="ePng">Imagen de esta planta (PNG)<small>Con cabecera ALMARA y leyenda con cantidades</small></button>
+  <button class="big" id="ePngTodas">Imágenes de todas las plantas</button>
+  <button class="big" id="ePdf">PDF / Imprimir<small>Una planta por página, A4 horizontal (elige «Guardar como PDF»)</small></button>
+  <h3>Copia de seguridad</h3>
+  <button class="big" id="eJson">Guardar copia del proyecto (.json)</button>
+  <button class="big" id="eImp">Abrir copia (.json)</button>
+  <input type="file" id="fImp" accept=".json,application/json" hidden>
+</div></div>
+<div class="velo" id="vDlg" style="align-items:center;padding:16px"><div class="hoja" style="border-radius:16px;max-width:420px;padding:18px">
+  <div id="dMsg" style="font-weight:700;font-size:16px;margin-bottom:12px"></div>
+  <input id="dIn" style="width:100%;padding:11px;border:1px solid var(--borde);border-radius:10px;font:inherit;font-size:16px" autocomplete="off">
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="pb" id="dNo">Cancelar</button><button class="pb az" id="dOk">Aceptar</button></div>
+</div></div>
+<div id="print"></div>
+
+<script>
+"use strict";
+const NS="http://www.w3.org/2000/svg", LS="almara-planos-v1";
+const C={azul:"#0B1F3A",acento:"#1E88E5",gris:"#5F6B7A",nar:"#E8730C",verde:"#2E9D5B",rojo:"#C62828",morado:"#7B3FA0",teal:"#00838F",amar:"#C99A00"};
+const CIRC=[
+  {id:"c1",n:"C1 Alumbrado",c:C.nar},{id:"c2",n:"C2 Enchufes",c:C.acento},{id:"c3",n:"C3 Cocina/horno",c:C.rojo},
+  {id:"c4",n:"C4 Lavadora/lavav./termo",c:C.morado},{id:"c5",n:"C5 Baño/cocina",c:C.teal},{id:"c6",n:"Aire acondicionado",c:C.verde},
+  {id:"c7",n:"Datos / TV",c:C.amar},{id:"c0",n:"Otro",c:C.gris}];
+// Tipos de símbolo. g = grupo de la paleta; box = rótulo con texto; w = ancho (m) para puertas y ventanas
+const T={
+  enchufe:{n:"Enchufe",g:"Enchufes"}, doble:{n:"Enchufe doble",g:"Enchufes"}, estanco:{n:"Enchufe estanco",g:"Enchufes"},
+  usb:{n:"Enchufe USB",g:"Enchufes"}, encimera:{n:"Enchufe encimera",g:"Enchufes"},
+  luz:{n:"Punto de luz",g:"Iluminación"}, luzc:{n:"Luz conmutada",g:"Iluminación"}, aplique:{n:"Aplique",g:"Iluminación"},
+  foco:{n:"Foco empotrado",g:"Iluminación"}, led:{n:"Tira LED",g:"Iluminación"}, exterior:{n:"Luz exterior",g:"Iluminación"},
+  inter:{n:"Interruptor",g:"Mandos"}, conm:{n:"Conmutador",g:"Mandos"}, cruce:{n:"Cruzamiento",g:"Mandos"},
+  puls:{n:"Pulsador",g:"Mandos"}, pir:{n:"Detector movimiento",g:"Mandos"}, persiana:{n:"Mando persiana",g:"Mandos"}, timbre:{n:"Timbre",g:"Mandos"},
+  cuadro:{n:"Cuadro eléctrico",g:"Cuadro y líneas",box:"CUADRO",c:C.azul,fill:1,w:.7},
+  horno:{n:"Línea horno",g:"Cuadro y líneas",box:"HORNO",c:C.rojo}, vitro:{n:"Línea vitro",g:"Cuadro y líneas",box:"VITRO",c:C.rojo},
+  lavadora:{n:"Línea lavadora",g:"Cuadro y líneas",box:"LAVADORA",c:C.morado}, lavavaj:{n:"Línea lavavajillas",g:"Cuadro y líneas",box:"LAVAVAJ.",c:C.morado},
+  secadora:{n:"Línea secadora",g:"Cuadro y líneas",box:"SECADORA",c:C.morado}, termo:{n:"Línea termo",g:"Cuadro y líneas",box:"TERMO",c:C.morado},
+  aa:{n:"Línea aire",g:"Cuadro y líneas",box:"A/A",c:C.verde}, extractor:{n:"Extractor",g:"Cuadro y líneas",box:"EXTRAC.",c:C.gris},
+  ve:{n:"Cargador coche",g:"Cuadro y líneas",box:"CARGADOR VE",c:C.verde}, linea:{n:"Línea (otra)",g:"Cuadro y líneas",box:"LÍNEA",c:C.gris},
+  subida:{n:"Subida a planta",g:"Cuadro y líneas",box:"↑ PLANTA",c:C.azul},
+  tv:{n:"Toma TV",g:"Telecom y seguridad",box:"TV",c:C.amar}, rj45:{n:"Toma red RJ45",g:"Telecom y seguridad",box:"RJ45",c:C.amar},
+  ap:{n:"Punto WiFi",g:"Telecom y seguridad"}, router:{n:"Router",g:"Telecom y seguridad",box:"ROUTER",c:C.amar},
+  starlink:{n:"Antena Starlink",g:"Telecom y seguridad"}, rack:{n:"Rack",g:"Telecom y seguridad",box:"RACK",c:C.azul,fill:1},
+  camara:{n:"Cámara",g:"Telecom y seguridad"}, ptel:{n:"Portero / videoportero",g:"Telecom y seguridad",box:"PORTERO",c:C.gris},
+  puerta:{n:"Puerta",g:"Arquitectura",w:.8}, corredera:{n:"Puerta corredera",g:"Arquitectura",w:.8}, ventana:{n:"Ventana",g:"Arquitectura",w:1.2},
+  escalera:{n:"Escalera",g:"Arquitectura",w:1}, texto:{n:"Texto",g:"Arquitectura"}
+};
+const GRUPOS=["Enchufes","Iluminación","Mandos","Cuadro y líneas","Telecom y seguridad","Arquitectura"];
+const NO_CUENTA={texto:1,puerta:1,corredera:1,ventana:1,escalera:1};
+
+// ---------- Estado ----------
+let db={proy:[],cur:null}, hist=[], rehacer=[];
+let herr="sel", colocar=null, circ="c2", sel=null, cam={x:0,y:0,s:45};
+let cotas=true;
+const $=id=>document.getElementById(id);
+const svg=$("plano"), vista=$("vista");
+const uid=()=>Math.random().toString(36).slice(2,9);
+const P=()=>db.proy.find(p=>p.id===db.cur);
+const PL=()=>{const p=P();return p.plantas.find(x=>x.id===p.planta)||p.plantas[0]};
+const r2=v=>Math.round(v*100)/100;
+const fmt=(v,d=2)=>v.toFixed(d).replace(".",",");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function nuevoProyecto(nombre,cliente){
+  const pl={id:uid(),nombre:"Planta baja",paredes:[],cables:[],items:[]};
+  return {id:uid(),nombre,cliente:cliente||"",fecha:new Date().toISOString().slice(0,10),plantas:[pl],planta:pl.id};
+}
+function cargar(){
+  try{const s=localStorage.getItem(LS);if(s)db=JSON.parse(s)}catch(e){}
+  if(!db.proy||!db.proy.length){const p=nuevoProyecto("Plano nuevo");db={proy:[p],cur:p.id}}
+  if(!P())db.cur=db.proy[0].id;
+}
+function guardar(){try{localStorage.setItem(LS,JSON.stringify(db))}catch(e){aviso("No se ha podido guardar en el móvil",3000)}}
+function cambio(){hist.push(JSON.stringify(P()));if(hist.length>80)hist.shift();rehacer=[];botonesHist()}
+function fin(){guardar();dibujar()}
+function botonesHist(){$("bUndo").disabled=!hist.length;$("bRedo").disabled=!rehacer.length}
+function reemplazar(json){const i=db.proy.findIndex(p=>p.id===db.cur);db.proy[i]=JSON.parse(json)}
+$("bUndo").onclick=()=>{if(!hist.length)return;rehacer.push(JSON.stringify(P()));reemplazar(hist.pop());sel=null;botonesHist();fin();panel()};
+$("bRedo").onclick=()=>{if(!rehacer.length)return;hist.push(JSON.stringify(P()));reemplazar(rehacer.pop());sel=null;botonesHist();fin();panel()};
+
+// ---------- Diálogos propios (funcionan también dentro de apps y visores) ----------
+function dialogo(msg,valor,conInput,conCancelar){return new Promise(ok=>{
+  const v=$("vDlg"),i=$("dIn");$("dMsg").textContent=msg;i.style.display=conInput?"block":"none";i.value=valor||"";$("dNo").style.display=conCancelar?"":"none";
+  v.classList.add("on");if(conInput)setTimeout(()=>{i.focus();i.select()},60);
+  const fin=r=>{v.classList.remove("on");$("dOk").onclick=$("dNo").onclick=i.onkeydown=null;ok(r)};
+  $("dOk").onclick=()=>fin(conInput?i.value:true);$("dNo").onclick=()=>fin(conInput?null:false);
+  i.onkeydown=e=>{if(e.key==="Enter")fin(i.value)}})}
+const pedir=(m,v)=>dialogo(m,v,true,true), confirmar=m=>dialogo(m,"",false,true), avisar=m=>dialogo(m,"",false,false);
+
+// ---------- Símbolos ----------
+function simb(it){
+  const t=it.t, d=T[t]||{}, sw=.028;
+  const L=(x1,y1,x2,y2,c,w)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w||sw}" stroke-linecap="round"/>`;
+  const Ci=(x,y,r,c,f)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f||"#fff"}" stroke="${c}" stroke-width="${sw}"/>`;
+  const Tx=(x,y,s,txt,c,w)=>`<text x="${x}" y="${y}" font-size="${s}" fill="${c}" font-weight="${w||700}" text-anchor="middle" dominant-baseline="central" font-family="Helvetica,Arial,sans-serif">${esc(txt)}</text>`;
+  const pins=(x,c)=>L(x-.045,-.06,x-.045,.06,c)+L(x+.045,-.06,x+.045,.06,c);
+  const X=(r,c)=>{const k=r*.707;return L(-k,-k,k,k,c)+L(-k,k,k,-k,c)};
+  const tick=(dir,c)=>{const a=dir*-.7854,ex=Math.cos(a)*.26*dir,ey=Math.sin(a)*.26*dir;return L(0,0,ex,ey,c)+L(ex,ey,ex+.07*Math.cos(a+1.57)*dir,ey+.07*Math.sin(a+1.57)*dir,c)};
+  switch(t){
+    case"enchufe":return Ci(0,0,.15,C.acento)+pins(0,C.acento);
+    case"doble":return Ci(-.13,0,.14,C.acento)+pins(-.13,C.acento)+Ci(.13,0,.14,C.acento)+pins(.13,C.acento);
+    case"estanco":return Ci(0,0,.15,C.teal,"#E3F4F5")+pins(0,C.teal)+Tx(0,.26,.1,"IP",C.teal);
+    case"usb":return Ci(0,0,.15,C.acento)+pins(0,C.acento)+Tx(0,.26,.09,"USB",C.acento);
+    case"encimera":return Ci(0,0,.15,C.teal)+pins(0,C.teal)+L(-.2,.2,.2,.2,C.teal);
+    case"luz":return Ci(0,0,.16,C.nar)+X(.16,C.nar);
+    case"luzc":return Ci(0,0,.16,C.morado)+X(.16,C.morado)+`<circle r=".21" fill="none" stroke="${C.morado}" stroke-width=".02"/>`;
+    case"aplique":return Ci(0,0,.13,C.nar)+X(.13,C.nar)+L(-.18,.17,.18,.17,C.nar,.04);
+    case"foco":return `<circle r=".13" fill="#fff" stroke="${C.nar}" stroke-width="${sw}"/><circle r=".06" fill="${C.nar}"/>`;
+    case"led":return `<rect x="-.35" y="-.05" width=".7" height=".1" rx=".03" fill="#FFE7CF" stroke="${C.nar}" stroke-width="${sw}"/>`+Tx(0,.15,.08,"LED",C.nar);
+    case"exterior":return Ci(0,0,.15,C.nar,"#FFF3E6")+X(.15,C.nar)+Tx(0,.27,.09,"EXT",C.nar);
+    case"inter":return `<circle r=".05" fill="${C.verde}"/>`+tick(1,C.verde);
+    case"conm":return `<circle r=".05" fill="${C.verde}"/>`+tick(1,C.verde)+tick(-1,C.verde);
+    case"cruce":return `<circle r=".05" fill="${C.verde}"/>`+tick(1,C.verde)+tick(-1,C.verde)+`<circle r=".11" fill="none" stroke="${C.verde}" stroke-width=".02"/>`;
+    case"puls":return Ci(0,0,.11,C.verde)+`<circle r=".045" fill="${C.verde}"/>`;
+    case"pir":return Ci(0,0,.15,C.verde)+Tx(0,0,.085,"PIR",C.verde);
+    case"persiana":return `<rect x="-.13" y="-.13" width=".26" height=".26" rx=".03" fill="#fff" stroke="${C.verde}" stroke-width="${sw}"/>`+Tx(0,-.045,.09,"▲",C.verde)+Tx(0,.05,.09,"▼",C.verde);
+    case"timbre":return `<path d="M-.12 .08 Q-.12 -.14 0 -.14 Q.12 -.14 .12 .08 Z" fill="#fff" stroke="${C.verde}" stroke-width="${sw}"/>`+L(-.15,.08,.15,.08,C.verde)+`<circle cy=".12" r=".03" fill="${C.verde}"/>`;
+    case"ap":return Ci(0,0,.17,C.amar,"#FFF8E1")+`<path d="M-.09 -.01 Q0 -.09 .09 -.01 M-.05 .03 Q0 -.01 .05 .03" fill="none" stroke="${C.amar}" stroke-width=".022" stroke-linecap="round"/><circle cy=".07" r=".02" fill="${C.amar}"/>`;
+    case"starlink":return `<rect x="-.2" y="-.14" width=".4" height=".28" rx=".04" fill="#fff" stroke="${C.azul}" stroke-width="${sw}"/>`+L(0,.14,0,.26,C.azul)+Tx(0,0,.075,"STARLINK",C.azul);
+    case"camara":return `<rect x="-.16" y="-.09" width=".24" height=".18" rx=".03" fill="#FDECEC" stroke="${C.rojo}" stroke-width="${sw}"/><path d="M.08 -.05 L.18 -.1 L.18 .1 L.08 .05 Z" fill="${C.rojo}"/>`;
+    case"puerta":{const w=it.w||d.w,h=w/2;return `<rect x="${-h}" y="-.075" width="${w}" height=".15" fill="#fff"/>`+L(-h,0,-h,-w,C.azul,.025)+`<path d="M${-h} ${-w} A${w} ${w} 0 0 1 ${h} 0" fill="none" stroke="${C.gris}" stroke-width=".015" stroke-dasharray=".05 .04"/>`+L(-h,-.07,-h,.07,C.azul,.03)+L(h,-.07,h,.07,C.azul,.03)}
+    case"corredera":{const w=it.w||d.w,h=w/2;return `<rect x="${-h}" y="-.075" width="${w}" height=".15" fill="#fff"/>`+`<rect x="${-h}" y="-.03" width="${w*.6}" height=".04" fill="#fff" stroke="${C.azul}" stroke-width=".02"/>`+`<rect x="${-h+w*.35}" y="-.01" width="${w*.6}" height=".04" fill="#fff" stroke="${C.gris}" stroke-width=".02" stroke-dasharray=".04 .03"/>`}
+    case"ventana":{const w=it.w||d.w,h=w/2;return `<rect x="${-h}" y="-.07" width="${w}" height=".14" fill="#fff" stroke="${C.azul}" stroke-width=".02"/>`+L(-h,0,h,0,C.acento,.02)}
+    case"escalera":{const w=it.w||d.w,n=8,lng=2.4;let s=`<rect x="${-w/2}" y="${-lng/2}" width="${w}" height="${lng}" fill="#fff" stroke="${C.gris}" stroke-width=".02"/>`;for(let i=1;i<n;i++){const y=-lng/2+i*lng/n;s+=L(-w/2,y,w/2,y,C.gris,.015)}return s+L(0,lng/2-.1,0,-lng/2+.15,C.azul,.02)+`<path d="M-.07 ${-lng/2+.25} L0 ${-lng/2+.12} L.07 ${-lng/2+.25}" fill="none" stroke="${C.azul}" stroke-width=".02"/>`}
+    case"texto":{const s=it.s||.28;return Tx(0,0,s,it.txt||"Texto",C.azul,700)+(it.sub?Tx(0,s*.95,s*.6,it.sub,C.gris,500):"")}
+  }
+  if(d.box){const txt=it.txt||d.box,w=Math.max(d.w||0,.13+txt.length*.085);return `<rect x="${-w/2}" y="-.12" width="${w}" height=".24" rx=".04" fill="${d.fill?d.c:"#fff"}" stroke="${d.c}" stroke-width="${sw}"/>`+Tx(0,.005,.115,txt,d.fill?"#fff":d.c)}
+  return Ci(0,0,.15,C.gris);
+}
+function itemSVG(it,conSel){
+  const tr=`translate(${it.x} ${it.y}) rotate(${it.r||0})${it.f?" scale(-1 1)":""}`;
+  let s=`<g data-id="${it.id}" transform="${tr}">`;
+  if(conSel){const w=(it.w||T[it.t]?.w||.3);s+=`<rect x="${-Math.max(w/2,.2)-.06}" y="-.26" width="${Math.max(w,.4)+.12}" height=".52" rx=".08" fill="none" stroke="${C.acento}" stroke-width=".03" stroke-dasharray=".06 .04"/>`}
+  s+=`<circle r="${Math.max(.28,(it.w||0)/2)}" fill="transparent"/>`+simb(it)+"</g>";
+  return s;
+}
+
+// ---------- Dibujo ----------
+function rejilla(){
+  const r=svg.getBoundingClientRect(), s=cam.s;
+  const x0=-cam.x/s, y0=-cam.y/s, x1=(r.width-cam.x)/s, y1=(r.height-cam.y)/s;
+  const paso=s<12?5:s<30?1:.5;
+  let g="";
+  for(let x=Math.floor(x0/paso)*paso;x<=x1;x+=paso){const fuerte=Math.abs(x/ (paso*2) - Math.round(x/(paso*2)))<1e-6||paso>=1&&Math.abs(x%5)<1e-6;g+=`<line x1="${x}" y1="${y0}" x2="${x}" y2="${y1}" stroke="${fuerte?"#DCE3EC":"#EEF2F7"}" stroke-width="${1/s}"/>`}
+  for(let y=Math.floor(y0/paso)*paso;y<=y1;y+=paso){const fuerte=Math.abs(y/(paso*2)-Math.round(y/(paso*2)))<1e-6||paso>=1&&Math.abs(y%5)<1e-6;g+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${fuerte?"#DCE3EC":"#EEF2F7"}" stroke-width="${1/s}"/>`}
+  return g+`<circle r="${4/s}" fill="#C9D3DF"/>`;
+}
+function cotaSVG(w,s){
+  const dx=w.x2-w.x1,dy=w.y2-w.y1,len=Math.hypot(dx,dy);if(len<.3)return"";
+  let a=Math.atan2(dy,dx)*180/Math.PI;if(a>90)a-=180;if(a<=-90)a+=180;
+  const nx=-dy/len,ny=dx/len,o=.22;
+  return `<text x="${(w.x1+w.x2)/2+nx*o}" y="${(w.y1+w.y2)/2+ny*o}" font-size="${s||.17}" fill="${C.gris}" font-weight="600" text-anchor="middle" dominant-baseline="central" font-family="Helvetica,Arial,sans-serif" transform="rotate(${a} ${(w.x1+w.x2)/2+nx*o} ${(w.y1+w.y2)/2+ny*o})">${fmt(len)} m</text>`;
+}
+function escena(pl,opt){
+  opt=opt||{};let s="";
+  for(const c of pl.cables){const col=(CIRC.find(k=>k.id===c.c)||CIRC[7]).c;s+=`<line x1="${c.x1}" y1="${c.y1}" x2="${c.x2}" y2="${c.y2}" stroke="${col}" stroke-width=".035" stroke-dasharray=".12 .07" stroke-linecap="round"/>`}
+  for(const w of pl.paredes)s+=`<line x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}" stroke="${C.azul}" stroke-width="${w.g||.12}" stroke-linecap="square"/>`;
+  if(opt.cotas)for(const w of pl.paredes)s+=cotaSVG(w);
+  for(const it of pl.items)s+=itemSVG(it,false);
+  return s;
+}
+let temp=null;
+function dibujar(){
+  const pl=PL();let s=`<g id="rej">${rejilla()}</g>`;
+  // zonas táctiles de cables y paredes
+  for(const c of pl.cables){const col=(CIRC.find(k=>k.id===c.c)||CIRC[7]).c,on=sel&&sel.k==="c"&&sel.id===c.id;
+    s+=`<line data-c="${c.id}" x1="${c.x1}" y1="${c.y1}" x2="${c.x2}" y2="${c.y2}" stroke="transparent" stroke-width="${Math.max(.3,18/cam.s)}"/>`;
+    s+=`<line x1="${c.x1}" y1="${c.y1}" x2="${c.x2}" y2="${c.y2}" stroke="${col}" stroke-width="${on?.07:.035}" stroke-dasharray=".12 .07" stroke-linecap="round" pointer-events="none"/>`}
+  for(const w of pl.paredes){const on=sel&&sel.k==="w"&&sel.id===w.id;
+    s+=`<line data-w="${w.id}" x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}" stroke="${on?C.acento:C.azul}" stroke-width="${w.g||.12}" stroke-linecap="square"/>`;
+    s+=`<line data-w="${w.id}" x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}" stroke="transparent" stroke-width="${Math.max(.3,18/cam.s)}"/>`}
+  if(cotas)for(const w of pl.paredes)s+=`<g pointer-events="none">${cotaSVG(w)}</g>`;
+  for(const it of pl.items)s+=itemSVG(it,sel&&sel.k==="i"&&sel.id===it.id);
+  // tiradores de extremos
+  if(sel&&(sel.k==="w"||sel.k==="c")){const o=(sel.k==="w"?pl.paredes:pl.cables).find(z=>z.id===sel.id);
+    if(o)for(const e of[1,2])s+=`<circle data-e="${e}" cx="${o["x"+e]}" cy="${o["y"+e]}" r="${11/cam.s}" fill="#fff" stroke="${C.acento}" stroke-width="${3/cam.s}"/>`}
+  if(temp){
+    if(temp.k==="hab"){const x=Math.min(temp.x1,temp.x2),y=Math.min(temp.y1,temp.y2),w=Math.abs(temp.x2-temp.x1),h=Math.abs(temp.y2-temp.y1);
+      s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="rgba(30,136,229,.08)" stroke="${C.acento}" stroke-width=".12"/>`}
+    else{const col=temp.k==="cable"?(CIRC.find(k=>k.id===circ)||CIRC[0]).c:C.acento;
+      s+=`<line x1="${temp.x1}" y1="${temp.y1}" x2="${temp.x2}" y2="${temp.y2}" stroke="${col}" stroke-width="${temp.k==="cable"?.05:.12}" stroke-linecap="square" ${temp.k==="cable"?'stroke-dasharray=".12 .07"':""}/>`;
+      s+=cotaSVG(temp,.2)}
+    if(temp.snap)s+=`<circle cx="${temp.snap.x}" cy="${temp.snap.y}" r="${9/cam.s}" fill="none" stroke="${C.verde}" stroke-width="${3/cam.s}"/>`;
+  }
+  vista.setAttribute("transform",`translate(${cam.x} ${cam.y}) scale(${cam.s})`);
+  vista.innerHTML=s;
+  const p=P();$("nomProy").textContent=p.nombre+(p.cliente?" · "+p.cliente:"");
+  pestanas();
+}
+function pestanas(){
+  const p=P();let h="";
+  for(const pl of p.plantas)h+=`<button data-pl="${pl.id}" class="${pl.id===PL().id?"on":""}">${esc(pl.nombre)}</button>`;
+  h+=`<button data-pl="+">＋ Planta</button><button data-pl="cotas">${cotas?"Ocultar":"Ver"} medidas</button>`;
+  if($("tabs").innerHTML!==h)$("tabs").innerHTML=h;
+}
+$("tabs").onclick=async e=>{
+  const b=e.target.closest("button");if(!b)return;const id=b.dataset.pl,p=P();
+  if(id==="cotas"){cotas=!cotas;dibujar();return}
+  if(id==="+"){const n=await pedir("Nombre de la planta","Planta "+(p.plantas.length+1));if(!n)return;cambio();const pl={id:uid(),nombre:n,paredes:[],cables:[],items:[]};p.plantas.push(pl);p.planta=pl.id;sel=null;fin();panel();return}
+  if(id===PL().id){ // segunda pulsación: renombrar / borrar
+    const n=await pedir("Nombre de la planta (déjalo vacío para eliminarla)",PL().nombre);if(n===null)return;cambio();
+    if(n.trim()===""){if(p.plantas.length<2){await avisar("El plano necesita al menos una planta");hist.pop();return}
+      if(!await confirmar("¿Eliminar "+PL().nombre+" y todo lo que tiene?")){hist.pop();return}
+      p.plantas=p.plantas.filter(x=>x.id!==id);p.planta=p.plantas[0].id}else PL().nombre=n.trim();
+    fin();return}
+  p.planta=id;sel=null;fin();panel();ajustar();
+};
+
+// ---------- Cámara ----------
+function aMundo(cx,cy){const r=svg.getBoundingClientRect();return{x:(cx-r.left-cam.x)/cam.s,y:(cy-r.top-cam.y)/cam.s}}
+function zoomEn(f,cx,cy){const r=svg.getBoundingClientRect();cx=cx??r.left+r.width/2;cy=cy??r.top+r.height/2;
+  const ns=Math.min(400,Math.max(6,cam.s*f));const mx=(cx-r.left-cam.x)/cam.s,my=(cy-r.top-cam.y)/cam.s;
+  cam.s=ns;cam.x=cx-r.left-mx*ns;cam.y=cy-r.top-my*ns;dibujar()}
+function limites(pl){let a=1e9,b=1e9,c=-1e9,d=-1e9;
+  const add=(x,y)=>{a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)};
+  for(const w of pl.paredes.concat(pl.cables)){add(w.x1,w.y1);add(w.x2,w.y2)}
+  for(const it of pl.items){const e=Math.max(.35,(it.w||0)/2+.1,it.t==="escalera"?1.3:0);add(it.x-e,it.y-e);add(it.x+e,it.y+e)}
+  return a>c?null:{x:a,y:b,w:c-a,h:d-b}}
+function ajustar(){const r=svg.getBoundingClientRect(),b=limites(PL());
+  if(!b){cam.s=45;cam.x=r.width*.12;cam.y=r.height*.15;dibujar();return}
+  const m=40;cam.s=Math.min(200,Math.max(8,Math.min((r.width-2*m)/Math.max(b.w,1),(r.height-2*m)/Math.max(b.h,1))));
+  cam.x=r.width/2-(b.x+b.w/2)*cam.s;cam.y=r.height/2-(b.y+b.h/2)*cam.s;dibujar()}
+$("zMas").onclick=()=>zoomEn(1.3);$("zMenos").onclick=()=>zoomEn(1/1.3);$("zAjustar").onclick=ajustar;
+svg.addEventListener("wheel",e=>{e.preventDefault();zoomEn(e.deltaY<0?1.12:1/1.12,e.clientX,e.clientY)},{passive:false});
+document.addEventListener("gesturestart",e=>e.preventDefault());
+
+// ---------- Ajustes (snap) ----------
+const rej=v=>Math.round(v/.05)*.05;
+function puntosClave(pl,excl){const pts=[];
+  for(const w of pl.paredes.concat(pl.cables)){if(excl&&excl.has(w))continue;pts.push({x:w.x1,y:w.y1},{x:w.x2,y:w.y2})}
+  return pts}
+function ajustarPunto(p,origen,tipo,excl){
+  const pl=PL(),rad=16/cam.s;let best=null,bd=rad;
+  const pts=puntosClave(pl,excl);
+  if(tipo==="cable")for(const it of pl.items)if(!NO_CUENTA[it.t])pts.push({x:it.x,y:it.y});
+  for(const q of pts){const d=Math.hypot(q.x-p.x,q.y-p.y);if(d<bd){bd=d;best=q}}
+  if(!best&&tipo!=="cable"){ // pegar a cualquier punto de una pared
+    for(const w of pl.paredes){if(excl&&excl.has(w))continue;const q=proyeccion(p,w);if(q.d<rad*.7&&q.d<bd){bd=q.d;best={x:q.x,y:q.y}}}}
+  if(best)return{x:best.x,y:best.y,snap:best};
+  let x=rej(p.x),y=rej(p.y);
+  if(origen){const dx=x-origen.x,dy=y-origen.y;if(Math.abs(dy)<Math.abs(dx)*.13)y=origen.y;else if(Math.abs(dx)<Math.abs(dy)*.13)x=origen.x;}
+  return{x:r2(x),y:r2(y)};
+}
+function proyeccion(p,w){const dx=w.x2-w.x1,dy=w.y2-w.y1,l2=dx*dx+dy*dy||1;let t=((p.x-w.x1)*dx+(p.y-w.y1)*dy)/l2;t=Math.max(0,Math.min(1,t));
+  const x=w.x1+t*dx,y=w.y1+t*dy;return{x,y,d:Math.hypot(p.x-x,p.y-y),a:Math.atan2(dy,dx)*180/Math.PI}}
+function paredCercana(p){let best=null;for(const w of PL().paredes){const q=proyeccion(p,w);if(q.d<.35&&(!best||q.d<best.d))best=q}return best}
+
+// ---------- Interacción ----------
+const ptrs=new Map();let acc=null,pinch=null;
+function aviso(t,ms){const a=$("aviso");if(!t){a.style.display="none";return}a.textContent=t;a.style.display="block";clearTimeout(aviso.t);if(ms)aviso.t=setTimeout(()=>a.style.display="none",ms)}
+function avisoHerr(){
+  const m={pared:"Arrastra para dibujar una pared",hab:"Arrastra para dibujar una habitación",cable:"Arrastra de un punto a otro para tirar cable",texto:"Toca donde quieras poner el texto"};
+  if(colocar)aviso("Toca el plano para poner: "+T[colocar].n);else aviso(m[herr]||"")}
+svg.addEventListener("pointerdown",e=>{
+  svg.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size===2){temp=null;if(acc&&acc.movido&&acc.tipo==="item"){/*mantener*/}acc=null;
+    const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),cx:(a.x+b.x)/2,cy:(a.y+b.y)/2};dibujar();return}
+  if(ptrs.size>2)return;
+  const w=aMundo(e.clientX,e.clientY),tg=e.target;
+  acc={x0:e.clientX,y0:e.clientY,w0:w,movido:false,camx:cam.x,camy:cam.y};
+  if(colocar||herr==="texto"){acc.tipo="tap";return}
+  if(herr==="pared"||herr==="cable"||herr==="hab"){const p=ajustarPunto(w,null,herr);acc.tipo="dibujar";
+    temp={k:herr,x1:p.x,y1:p.y,x2:p.x,y2:p.y,snap:p.snap};dibujar();return}
+  // seleccionar / mover
+  const pl=PL();
+  if(tg.dataset.e&&sel){const o=(sel.k==="w"?pl.paredes:pl.cables).find(z=>z.id===sel.id);
+    const ex=o["x"+tg.dataset.e],ey=o["y"+tg.dataset.e];const lig=[];
+    for(const z of pl.paredes.concat(pl.cables))for(const k of[1,2])if(Math.abs(z["x"+k]-ex)<1e-6&&Math.abs(z["y"+k]-ey)<1e-6)lig.push([z,k]);
+    acc.tipo="extremo";acc.lig=lig;acc.o=o;acc.k=tg.dataset.e;acc.excl=new Set(lig.map(l=>l[0]));return}
+  const gi=tg.closest("[data-id]");
+  if(gi){const it=pl.items.find(i=>i.id===gi.dataset.id);sel={k:"i",id:it.id};acc.tipo="item";acc.it=it;acc.dx=it.x-w.x;acc.dy=it.y-w.y;dibujar();panel();return}
+  if(tg.dataset.w||tg.dataset.c){const k=tg.dataset.w?"w":"c",id=tg.dataset.w||tg.dataset.c;const o=(k==="w"?pl.paredes:pl.cables).find(z=>z.id===id);
+    sel={k,id};acc.tipo="linea";acc.o=o;acc.orig={...o};dibujar();panel();return}
+  acc.tipo="pan";
+});
+svg.addEventListener("pointermove",e=>{
+  if(!ptrs.has(e.pointerId))return;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pinch&&ptrs.size===2){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y),cx=(a.x+b.x)/2,cy=(a.y+b.y)/2;
+    cam.x+=cx-pinch.cx;cam.y+=cy-pinch.cy;pinch.cx=cx;pinch.cy=cy;zoomEn(d/pinch.d,cx,cy);pinch.d=d;return}
+  if(!acc)return;
+  const mv=Math.hypot(e.clientX-acc.x0,e.clientY-acc.y0);if(mv>6&&!acc.movido){acc.movido=true;
+    if(["item","linea","extremo"].includes(acc.tipo))cambio()}
+  if(!acc.movido)return;
+  const w=aMundo(e.clientX,e.clientY),pl=PL();
+  switch(acc.tipo){
+    case"pan":case"tap":cam.x=acc.camx+e.clientX-acc.x0;cam.y=acc.camy+e.clientY-acc.y0;acc.tipo="pan";dibujar();break;
+    case"dibujar":{const o={x:temp.x1,y:temp.y1};let p;
+      if(herr==="hab"){p={x:r2(rej(w.x)),y:r2(rej(w.y))};const q=ajustarPunto(w,null,"pared");if(q.snap)p=q}else p=ajustarPunto(w,o,herr);
+      temp.x2=p.x;temp.y2=p.y;temp.snap=p.snap;
+      if(herr==="hab")aviso(fmt(Math.abs(temp.x2-temp.x1))+" × "+fmt(Math.abs(temp.y2-temp.y1))+" m");
+      else aviso(fmt(Math.hypot(temp.x2-temp.x1,temp.y2-temp.y1))+" m");
+      dibujar();break}
+    case"item":{const it=acc.it;let x=w.x+acc.dx,y=w.y+acc.dy;
+      if(["puerta","corredera","ventana","enchufe","doble","estanco","usb","encimera","inter","conm","cruce","puls","persiana","aplique","tv","rj45"].includes(it.t)){
+        const q=paredCercana({x,y});if(q&&["puerta","corredera","ventana"].includes(it.t)){x=q.x;y=q.y;it.r=Math.round(q.a)}}
+      it.x=r2(rej(x));it.y=r2(rej(y));dibujar();break}
+    case"linea":{const o=acc.o,dx=rej(w.x-acc.w0.x),dy=rej(w.y-acc.w0.y);
+      o.x1=r2(acc.orig.x1+dx);o.y1=r2(acc.orig.y1+dy);o.x2=r2(acc.orig.x2+dx);o.y2=r2(acc.orig.y2+dy);dibujar();break}
+    case"extremo":{const k=acc.k,ot=acc.k==="1"?"2":"1";const p=ajustarPunto(w,{x:acc.o["x"+ot],y:acc.o["y"+ot]},sel.k==="c"?"cable":"pared",acc.excl);
+      for(const [z,kk] of acc.lig){z["x"+kk]=p.x;z["y"+kk]=p.y}
+      aviso(fmt(Math.hypot(acc.o.x2-acc.o.x1,acc.o.y2-acc.o.y1))+" m");dibujar();break}
+  }
+});
+async function soltar(e){
+  ptrs.delete(e.pointerId);
+  if(pinch){if(ptrs.size<2)pinch=null;acc=null;return}
+  if(!acc)return;const a=acc;acc=null;const pl=PL();
+  if(a.tipo==="dibujar"&&temp){const t=temp;temp=null;
+    if(t.k==="hab"){const w=Math.abs(t.x2-t.x1),h=Math.abs(t.y2-t.y1);
+      if(w>=.3&&h>=.3){crearHab(Math.min(t.x1,t.x2),Math.min(t.y1,t.y2),w,h)}else dibujar()}
+    else if(Math.hypot(t.x2-t.x1,t.y2-t.y1)>=.1){cambio();
+      const o={id:uid(),x1:t.x1,y1:t.y1,x2:t.x2,y2:t.y2};if(t.k==="cable"){o.c=circ;pl.cables.push(o)}else pl.paredes.push(o);
+      sel={k:t.k==="cable"?"c":"w",id:o.id};fin();panel()}
+    else dibujar();
+    avisoHerr();return}
+  if(a.tipo==="tap"&&!a.movido){const w=aMundo(a.x0,a.y0);
+    if(herr==="texto"){const t=await pedir("Texto (por ejemplo: Cocina, Baño, Dormitorio 1)");if(!t)return;cambio();
+      const it={id:uid(),t:"texto",x:r2(rej(w.x)),y:r2(rej(w.y)),r:0,txt:t};pl.items.push(it);sel={k:"i",id:it.id};fin();panel();return}
+    if(colocar){cambio();let x=r2(rej(w.x)),y=r2(rej(w.y)),r=0;
+      if(["puerta","corredera","ventana"].includes(colocar)){const q=paredCercana(w);if(q){x=r2(q.x);y=r2(q.y);r=Math.round(q.a)}}
+      const it={id:uid(),t:colocar,x,y,r};if(T[colocar].w&&colocar!=="cuadro")it.w=T[colocar].w;
+      pl.items.push(it);sel={k:"i",id:it.id};fin();panel();
+      aviso(T[colocar].n+" añadido · toca otra vez para poner más",1800);return}
+  }
+  if(a.tipo==="pan"&&!a.movido&&herr==="sel"){sel=null;dibujar();panel()}
+  if(a.movido&&["item","linea","extremo"].includes(a.tipo)){fin();aviso("")}
+}
+svg.addEventListener("pointerup",soltar);svg.addEventListener("pointercancel",soltar);
+
+async function crearHab(x,y,w,h,nombre){
+  const pl=PL();cambio();x=r2(x);y=r2(y);w=r2(w);h=r2(h);
+  const pts=[[x,y],[x+w,y],[x+w,y+h],[x,y+h]];
+  for(let i=0;i<4;i++){const a=pts[i],b=pts[(i+1)%4];
+    if(!pl.paredes.some(q=>(q.x1===a[0]&&q.y1===a[1]&&q.x2===b[0]&&q.y2===b[1])||(q.x1===b[0]&&q.y1===b[1]&&q.x2===a[0]&&q.y2===a[1])))
+      pl.paredes.push({id:uid(),x1:a[0],y1:a[1],x2:b[0],y2:b[1]})}
+  if(nombre===undefined)nombre=await pedir("Nombre de la habitación (opcional)","");
+  if(nombre)pl.items.push({id:uid(),t:"texto",x:r2(x+w/2),y:r2(y+h/2),r:0,txt:nombre,sub:fmt(w*h,1)+" m²",s:Math.min(.3,Math.max(.16,Math.min(w,h)/9))});
+  sel=null;fin();panel();
+}
+
+// ---------- Herramientas ----------
+$("herr").onclick=e=>{
+  const b=e.target.closest("button");if(!b)return;const h=b.dataset.h;
+  if(h==="simb"){paleta();abrir("vSimb");return}
+  if(h==="resumen"){resumen();abrir("vRes");return}
+  setHerr(h);
+};
+function setHerr(h,col){herr=h;colocar=col||null;
+  for(const b of $("herr").children)b.classList.toggle("on",b.dataset.h===(colocar?"simb":h));
+  if(h!=="sel")sel=null;dibujar();panel();avisoHerr()}
+function abrir(id){$(id).classList.add("on");$(id).firstElementChild.scrollTop=0}
+document.querySelectorAll(".velo:not(#vDlg)").forEach(v=>v.addEventListener("click",e=>{if(e.target===v||e.target.closest("[data-cerrar]"))v.classList.remove("on")}));
+function mini(t){const it={t,x:0,y:0,r:0,w:T[t].w?Math.min(T[t].w,.9):undefined,txt:t==="texto"?"Abc":undefined,s:.3};
+  const vb=t==="escalera"?"-1.3 -1.3 2.6 2.6":["puerta","corredera","ventana"].includes(t)?"-.65 -.85 1.3 1":"-.45 -.35 .9 .7";
+  return `<svg viewBox="${vb}">${simb(it)}</svg>`}
+function paleta(){let h="";
+  for(const g of GRUPOS){h+=`<h3>${g}</h3><div class="rej">`;
+    for(const k in T)if(T[k].g===g)h+=`<button data-t="${k}">${mini(k)}${T[k].n}</button>`;h+="</div>"}
+  $("paleta").innerHTML=h}
+$("paleta").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;$("vSimb").classList.remove("on");
+  if(b.dataset.t==="texto"){setHerr("texto");return}setHerr("sel",b.dataset.t)};
+
+// ---------- Panel contextual ----------
+function panel(){
+  const p=$("panel"),pl=PL();let h="";
+  if(colocar){h=`<span class="nom">Poniendo: ${T[colocar].n}</span><button class="pb az" data-a="terminar">Terminar</button>`}
+  else if(herr==="cable"&&!sel){h=`<span class="nom">Circuito:</span>`+CIRC.map(c=>`<button class="circ ${c.id===circ?"on":""}" style="background:${c.c}" data-circ="${c.id}" title="${c.n}"></button>`).join("")+`<span style="width:100%;color:${C.gris};font-size:12px">${CIRC.find(c=>c.id===circ).n}</span>`}
+  else if(herr==="hab"&&!sel){h=`<span class="nom">Por medidas:</span><input id="hW" type="number" inputmode="decimal" step="0.05" placeholder="ancho"> × <input id="hH" type="number" inputmode="decimal" step="0.05" placeholder="largo"> m <button class="pb az" data-a="habMedida">Crear</button>`}
+  else if(sel&&sel.k==="i"){const it=pl.items.find(i=>i.id===sel.id);if(!it){sel=null;return panel()}const d=T[it.t];
+    h=`<span class="nom">${d.n}</span><button class="pb" data-a="rot">⟳ Girar</button>`;
+    if(["puerta","corredera","escalera"].includes(it.t))h+=`<button class="pb" data-a="flip">⇋ Voltear</button>`;
+    if(d.w&&it.t!=="cuadro")h+=`<button class="pb" data-a="w-">−</button><span>${fmt(it.w||d.w)} m</span><button class="pb" data-a="w+">+</button>`;
+    if(d.box||it.t==="texto")h+=`<button class="pb" data-a="txt">✎ Texto</button>`;
+    if(it.t==="texto")h+=`<button class="pb" data-a="s-">A−</button><button class="pb" data-a="s+">A+</button>`;
+    h+=`<button class="pb" data-a="dup">Duplicar</button><button class="pb rojo" data-a="del">Eliminar</button>`}
+  else if(sel&&(sel.k==="w"||sel.k==="c")){const arr=sel.k==="w"?pl.paredes:pl.cables,o=arr.find(z=>z.id===sel.id);if(!o){sel=null;return panel()}
+    const len=Math.hypot(o.x2-o.x1,o.y2-o.y1);
+    h=`<span class="nom">${sel.k==="w"?"Pared":"Cable"}</span><input id="lenIn" type="number" inputmode="decimal" step="0.01" value="${len.toFixed(2)}"> m <button class="pb az" data-a="len">Aplicar</button>`;
+    if(sel.k==="w")h+=`<button class="pb" data-a="grosor">${(o.g||.12)>.15?"Muro grueso":"Tabique"}</button>`;
+    if(sel.k==="c")h+=CIRC.map(c=>`<button class="circ ${c.id===o.c?"on":""}" style="background:${c.c}" data-circ="${c.id}"></button>`).join("");
+    h+=`<button class="pb rojo" data-a="del">Eliminar</button>`}
+  p.innerHTML=h;p.classList.toggle("on",!!h);
+}
+$("panel").onclick=async e=>{
+  const b=e.target.closest("button");if(!b)return;const pl=PL();
+  if(b.dataset.circ){if(sel&&sel.k==="c"){cambio();pl.cables.find(c=>c.id===sel.id).c=b.dataset.circ;circ=b.dataset.circ;fin()}else circ=b.dataset.circ;panel();return}
+  const a=b.dataset.a;
+  if(a==="terminar"){setHerr("sel");return}
+  if(a==="habMedida"){const w=parseFloat(($("hW").value||"").replace(",",".")),h=parseFloat(($("hH").value||"").replace(",","."));
+    if(!(w>0&&h>0)){aviso("Pon el ancho y el largo en metros",2000);return}
+    const r=svg.getBoundingClientRect(),c=aMundo(r.left+r.width/2,r.top+r.height/2);
+    // si hay paredes, colocarla a la derecha de lo dibujado
+    const bd=limites(pl);let x=rej(c.x-w/2),y=rej(c.y-h/2);if(bd){x=rej(bd.x+bd.w);y=rej(bd.y)}
+    await crearHab(x,y,w,h);ajustar();return}
+  if(sel&&sel.k==="i"){const it=pl.items.find(i=>i.id===sel.id),d=T[it.t];
+    if(a==="txt"){const t=await pedir("Texto",it.txt||d.box||"");if(t===null)return;cambio();it.txt=t;if(it.t==="texto"&&it.sub!==undefined){const s=await pedir("Segunda línea (opcional, p. ej. m²)",it.sub||"");if(s!==null)it.sub=s}}
+    else{cambio();
+      if(a==="rot")it.r=((it.r||0)+90)%360;
+      if(a==="flip")it.f=it.f?0:1;
+      if(a==="w-")it.w=r2(Math.max(.4,(it.w||d.w)-.1));
+      if(a==="w+")it.w=r2((it.w||d.w)+.1);
+      if(a==="s-")it.s=r2(Math.max(.1,(it.s||.28)-.04));
+      if(a==="s+")it.s=r2((it.s||.28)+.04);
+      if(a==="dup"){const n={...it,id:uid(),x:r2(it.x+.4),y:r2(it.y+.4)};pl.items.push(n);sel={k:"i",id:n.id}}
+      if(a==="del"){pl.items=pl.items.filter(i=>i!==it);sel=null}}
+    fin();panel();return}
+  if(sel&&(sel.k==="w"||sel.k==="c")){const key=sel.k==="w"?"paredes":"cables",o=pl[key].find(z=>z.id===sel.id);
+    if(a==="len"){const L=parseFloat($("lenIn").value.replace(",","."));if(!(L>0))return;cambio();
+      const len=Math.hypot(o.x2-o.x1,o.y2-o.y1)||1,ux=(o.x2-o.x1)/len,uy=(o.y2-o.y1)/len,ox=o.x2,oy=o.y2;
+      const nx=r2(o.x1+ux*L),ny=r2(o.y1+uy*L);
+      for(const z of pl.paredes.concat(pl.cables))for(const k of[1,2])if(Math.abs(z["x"+k]-ox)<1e-6&&Math.abs(z["y"+k]-oy)<1e-6){z["x"+k]=nx;z["y"+k]=ny}
+    }
+    if(a==="grosor"){cambio();o.g=(o.g||.12)>.15?.12:.25}
+    if(a==="del"){cambio();pl[key]=pl[key].filter(z=>z!==o);sel=null}
+    fin();panel()}
+};
+
+// ---------- Resumen ----------
+function cuentas(pl){const n={};for(const it of pl.items)if(!NO_CUENTA[it.t])n[it.t]=(n[it.t]||0)+1;return n}
+function metros(arr){return arr.reduce((s,w)=>s+Math.hypot(w.x2-w.x1,w.y2-w.y1),0)}
+function textoResumen(){const p=P();let out=`ALMARA · ${p.nombre}${p.cliente?" ("+p.cliente+")":""}\n`;
+  const tot={},cab={};
+  for(const pl of p.plantas){const n=cuentas(pl);out+=`\n${pl.nombre.toUpperCase()}\n`;
+    const ks=Object.keys(T).filter(k=>n[k]);if(!ks.length)out+="  (sin mecanismos)\n";
+    for(const k of ks){out+=`  ${T[k].n}: ${n[k]}\n`;tot[k]=(tot[k]||0)+n[k]}
+    for(const c of pl.cables)cab[c.c]=(cab[c.c]||0)+Math.hypot(c.x2-c.x1,c.y2-c.y1)}
+  if(p.plantas.length>1){out+="\nTOTAL\n";for(const k of Object.keys(T))if(tot[k])out+=`  ${T[k].n}: ${tot[k]}\n`}
+  const ck=Object.keys(cab);if(ck.length){out+="\nCABLE DIBUJADO (recorrido en planta)\n";for(const c of CIRC)if(cab[c.id])out+=`  ${c.n}: ${fmt(cab[c.id],1)} m\n`}
+  return out}
+function resumen(){const p=P();let h="";const tot={},cab={};
+  for(const pl of p.plantas){const n=cuentas(pl);h+=`<h3>${esc(pl.nombre)}</h3><table class="lista">`;let alguno=false;
+    for(const k of Object.keys(T))if(n[k]){alguno=true;h+=`<tr><td>${T[k].n}</td><td>${n[k]}</td></tr>`;tot[k]=(tot[k]||0)+n[k]}
+    if(!alguno)h+=`<tr><td style="color:${C.gris}">Sin mecanismos todavía</td><td></td></tr>`;
+    h+=`<tr><td style="color:${C.gris}">Paredes dibujadas</td><td>${fmt(metros(pl.paredes),1)} m</td></tr></table>`;
+    for(const c of pl.cables)cab[c.c]=(cab[c.c]||0)+Math.hypot(c.x2-c.x1,c.y2-c.y1)}
+  if(p.plantas.length>1){h+=`<h3>Total del proyecto</h3><table class="lista">`;for(const k of Object.keys(T))if(tot[k])h+=`<tr><td>${T[k].n}</td><td>${tot[k]}</td></tr>`;h+="</table>"}
+  if(Object.keys(cab).length){h+=`<h3>Cable dibujado (recorrido en planta)</h3><table class="lista">`;
+    for(const c of CIRC)if(cab[c.id])h+=`<tr><td><span class="circ" style="display:inline-block;width:12px;height:12px;border:0;background:${c.c};vertical-align:-1px"></span> ${c.n}</td><td>${fmt(cab[c.id],1)} m</td></tr>`;
+    h+=`</table><p style="font-size:12px;color:${C.gris}">Son metros de recorrido en planta. Para comprar cable suma bajadas a mecanismos y un 10–15 % de margen.</p>`}
+  $("resumen").innerHTML=h}
+$("bCopiar").onclick=async()=>{const t=textoResumen();try{await navigator.clipboard.writeText(t);aviso("Resumen copiado",1800)}catch(e){await pedir("Copia el resumen:",t)}};
+
+// ---------- Proyectos ----------
+function listaProy(){let h="";
+  for(const p of db.proy){const n=p.plantas.reduce((s,pl)=>s+pl.items.filter(i=>!NO_CUENTA[i.t]).length,0);
+    h+=`<div class="fila ${p.id===db.cur?"on":""}"><div class="q" data-abrir="${p.id}"><b>${esc(p.nombre)}</b><small>${esc(p.cliente||"Sin cliente")} · ${p.plantas.length} planta${p.plantas.length>1?"s":""} · ${n} puntos · ${p.fecha||""}</small></div>
+    <button class="pb" data-ren="${p.id}">✎</button><button class="pb" data-dup="${p.id}">⧉</button><button class="pb rojo" data-del="${p.id}">🗑</button></div>`}
+  $("listaProy").innerHTML=h}
+$("bProy").onclick=()=>{listaProy();abrir("vProy")};
+$("listaProy").onclick=async e=>{const t=e.target.closest("[data-abrir],[data-ren],[data-dup],[data-del]");if(!t)return;
+  if(t.dataset.abrir){db.cur=t.dataset.abrir;hist=[];rehacer=[];botonesHist();sel=null;guardar();$("vProy").classList.remove("on");setHerr("sel");ajustar();return}
+  if(t.dataset.ren){const p=db.proy.find(x=>x.id===t.dataset.ren);const n=await pedir("Nombre del plano",p.nombre);if(n===null)return;const c=await pedir("Cliente / dirección",p.cliente||"");p.nombre=n.trim()||p.nombre;if(c!==null)p.cliente=c.trim()}
+  if(t.dataset.dup){const p=db.proy.find(x=>x.id===t.dataset.dup);const n=JSON.parse(JSON.stringify(p));n.id=uid();n.nombre+=" (copia)";db.proy.unshift(n)}
+  if(t.dataset.del){const p=db.proy.find(x=>x.id===t.dataset.del);if(!await confirmar("¿Eliminar el plano «"+p.nombre+"»? No se puede deshacer."))return;
+    db.proy=db.proy.filter(x=>x!==p);if(!db.proy.length)db.proy.push(nuevoProyecto("Plano nuevo"));if(!P()){db.cur=db.proy[0].id;hist=[];rehacer=[];botonesHist()}}
+  guardar();listaProy();dibujar()};
+$("bNuevo").onclick=async()=>{const n=await pedir("Nombre del plano (p. ej. Casa Irina, Nave polígono)","");if(!n)return;const c=await pedir("Cliente o dirección (opcional)","")||"";
+  const p=nuevoProyecto(n.trim(),c.trim());db.proy.unshift(p);db.cur=p.id;hist=[];rehacer=[];botonesHist();sel=null;guardar();$("vProy").classList.remove("on");setHerr("hab");ajustar()};
+
+// ---------- Exportar ----------
+function svgExport(pl){
+  const p=P(),b=limites(pl)||{x:0,y:0,w:4,h:3},n=cuentas(pl);
+  const ks=Object.keys(T).filter(k=>n[k]);const usados=new Set(pl.cables.map(c=>c.c));const circs=CIRC.filter(c=>usados.has(c.id));
+  const m=.8,W=Math.max(b.w+2*m,9),cab=1.3,filas=Math.ceil((ks.length+circs.length)/3),ley=filas?.7+filas*.45:.2,H=cab+b.h+2*m+ley;
+  const ox=(W-b.w)/2-b.x,oy=cab+m-b.y;
+  const T2=(x,y,s,t,c,w,an)=>`<text x="${x}" y="${y}" font-size="${s}" fill="${c}" font-weight="${w||700}" text-anchor="${an||"start"}" dominant-baseline="central" font-family="Helvetica,Arial,sans-serif">${esc(t)}</text>`;
+  let s=`<svg xmlns="${NS}" viewBox="0 0 ${r2(W)} ${r2(H)}" width="${r2(W)*100}" height="${r2(H)*100}"><rect width="${W}" height="${H}" fill="#fff"/>`;
+  s+=`<rect width="${W}" height="${cab}" fill="${C.azul}"/>`+T2(.4,.45,.38,"ALMARA","#fff",800)+T2(.4,.92,.17,"623 916 122 · contacto@almara.group","#B8C7DA",500);
+  s+=T2(W-.4,.45,.26,p.nombre+" · "+pl.nombre,"#fff",700,"end")+T2(W-.4,.92,.17,[p.cliente,new Date().toLocaleDateString("es-ES")].filter(Boolean).join(" · "),"#B8C7DA",500,"end");
+  s+=`<g transform="translate(${ox} ${oy})">${escena(pl,{cotas:true})}</g>`;
+  if(filas){const y0=cab+b.h+2*m;s+=`<line x1=".4" y1="${y0}" x2="${W-.4}" y2="${y0}" stroke="#DCE3EC" stroke-width=".02"/>`+T2(.4,y0+.3,.17,"LEYENDA Y CANTIDADES",C.gris,700);
+    const cw=(W-.8)/3;let i=0;
+    for(const k of ks){const x=.4+(i%3)*cw,y=y0+.75+Math.floor(i/3)*.45;s+=`<g transform="translate(${x+.25} ${y}) scale(.8)">${simb({t:k,x:0,y:0,r:0,w:T[k].w?.6:undefined})}</g>`+T2(x+.65,y,.16,`${T[k].n} × ${n[k]}`,C.azul,600);i++}
+    for(const c of circs){const x=.4+(i%3)*cw,y=y0+.75+Math.floor(i/3)*.45;const ml=pl.cables.filter(z=>z.c===c.id).reduce((a,z)=>a+Math.hypot(z.x2-z.x1,z.y2-z.y1),0);
+      s+=`<line x1="${x}" y1="${y}" x2="${x+.5}" y2="${y}" stroke="${c.c}" stroke-width=".04" stroke-dasharray=".12 .07"/>`+T2(x+.65,y,.16,`${c.n} · ${fmt(ml,1)} m`,C.azul,600);i++}}
+  return s+"</svg>"}
+async function aPng(pl){const s=svgExport(pl);const m=s.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);const W=+m[1],H=+m[2];
+  const k=Math.min(160,Math.max(90,2400/W)),cw=Math.round(W*k),ch=Math.round(H*k);
+  const img=new Image();const url=URL.createObjectURL(new Blob([s],{type:"image/svg+xml"}));
+  await new Promise((ok,ko)=>{img.onload=ok;img.onerror=ko;img.src=url});
+  const cv=document.createElement("canvas");cv.width=cw;cv.height=ch;const cx=cv.getContext("2d");cx.fillStyle="#fff";cx.fillRect(0,0,cw,ch);cx.drawImage(img,0,0,cw,ch);URL.revokeObjectURL(url);
+  return await new Promise(ok=>cv.toBlob(ok,"image/png"))}
+const nombreArchivo=(t,ext)=>("Plano "+P().nombre+(t?" - "+t:"")).replace(/[\\/:*?"<>|]/g,"")+"."+ext;
+async function compartir(files){
+  try{if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files});return}}catch(e){if(e.name==="AbortError")return}
+  for(const f of files){const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}}
+$("ePng").onclick=async()=>{aviso("Preparando imagen…");try{const b=await aPng(PL());await compartir([new File([b],nombreArchivo(PL().nombre,"png"),{type:"image/png"})])}catch(e){await avisar("No se ha podido crear la imagen")}aviso("")};
+$("ePngTodas").onclick=async()=>{aviso("Preparando imágenes…");try{const fs=[];for(const pl of P().plantas){const b=await aPng(pl);fs.push(new File([b],nombreArchivo(pl.nombre,"png"),{type:"image/png"}))}await compartir(fs)}catch(e){await avisar("No se han podido crear las imágenes")}aviso("")};
+$("ePdf").onclick=()=>{$("print").innerHTML=P().plantas.map(svgExport).join("");$("vExp").classList.remove("on");setTimeout(()=>window.print(),200)};
+$("eJson").onclick=()=>compartir([new File([JSON.stringify({almaraPlanos:1,proyecto:P()},null,1)],nombreArchivo("","json"),{type:"application/json"})]);
+$("eImp").onclick=()=>$("fImp").click();
+$("fImp").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());const p=d.proyecto||d;if(!p.plantas)throw 0;
+  p.id=uid();db.proy.unshift(p);db.cur=p.id;hist=[];rehacer=[];botonesHist();guardar();$("vExp").classList.remove("on");ajustar();aviso("Plano abierto: "+p.nombre,2000)}catch(err){await avisar("Ese archivo no es una copia de ALMARA Planos")}e.target.value=""};
+$("bExp").onclick=()=>abrir("vExp");
+
+// ---------- Inicio ----------
+window.addEventListener("resize",()=>dibujar());
+cargar();botonesHist();ajustar();panel();
+if(!PL().paredes.length&&!PL().items.length)setHerr("hab");
+if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
